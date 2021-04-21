@@ -94,6 +94,8 @@ CORS_ORIGIN_WHITELIST = (
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 if 'test' in sys.argv:
     DATABASES = {
         'default': {
