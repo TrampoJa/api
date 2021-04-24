@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.exceptions import ValidationError, NotFound, PermissionDenied
 
 from .serializers import ConfirmadosSerializer
 from .models import Confirmados
@@ -22,7 +23,7 @@ def get_confirmado(pk):
     try:
         return Confirmados.objects.get(pk=pk)
     except Confirmados.DoesNotExist:
-        raise Http404
+        raise NotFound(detail="Confirmado não encontrado.")
 
 
 class CreateConfirmadoView():    
@@ -34,9 +35,9 @@ class CreateConfirmadoView():
             oferta = get_oferta(request.data['oferta'])
             freelancer = get_freelancer(request.data['freelancer'])
             if oferta.status == False:
-                return Response(status=400)
+                raise ValidationError(detail="Este trampo já está confirmado.")
             if oferta.date_inicial < datetime.date.today():
-                return Response(status=400)
+                raise ValidationError(detail="Este trampo já aconteceu ou passou da data.")
             try:
                 c = Confirmados.objects.create(oferta=oferta, owner=freelancer.owner)
                 oferta.status = False
@@ -49,8 +50,8 @@ class CreateConfirmadoView():
                 )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             except Exception:
-                return Response(serializer.error_messages, status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=403)
+                raise ValidationError(detail="Não foi possível confirmar este trampo.")
+        raise PermissionDenied(detail=["Você não tem permissão para isso."])
 
 
 class ListToFreelancerConfirmadoView():
@@ -61,7 +62,7 @@ class ListToFreelancerConfirmadoView():
         if confirmados is not None:
             serializer = ConfirmadosSerializer(confirmados, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        raise NotFound(detail="Não foi possível exibir os trampos confirmados.")
 
 
 class ListToEstabelecimentoConfirmadoView():
@@ -72,4 +73,4 @@ class ListToEstabelecimentoConfirmadoView():
         if confirmados is not None:
             serializer = ConfirmadosSerializer(confirmados, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        raise NotFound(detail="Não foi possível exibir os trampos confirmados.")

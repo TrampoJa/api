@@ -82,7 +82,7 @@ class TestOfertasCreateView(TestOfertas):
         }
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         response = self.client.post("/ofertas/create", data)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
 
     def test_create_ofertas_post_error_date(self):
         data = {
@@ -95,7 +95,7 @@ class TestOfertasCreateView(TestOfertas):
         }
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         response = self.client.post("/ofertas/create", data)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
 
     def test_create_ofertas_post_error(self):
         data = {

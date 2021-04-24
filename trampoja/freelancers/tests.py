@@ -108,7 +108,7 @@ class TestFreeLancersCreateView(TestFreeLancers):
         }
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         response = self.client.post("/freelancer/create", data)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
     
     def test_create_freelancer_post_error_nascimento(self):
         data = {
@@ -121,7 +121,7 @@ class TestFreeLancersCreateView(TestFreeLancers):
         }
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         response = self.client.post("/freelancer/create", data)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
 
     def test_create_freelancer_post_error(self):
         data = {}
@@ -225,7 +225,7 @@ class TestCountOfertasConfirmadasFreelancerView(TestFreeLancers):
 
     def test_count_ofertas_freelancer_authentication_error(self):
         response = self.client.get("/freelancer/count-ofertas")
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 404)
 
 
 class TestHistoricoFreelancerView(TestFreeLancers):

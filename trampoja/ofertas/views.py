@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.exceptions import ValidationError, NotFound, PermissionDenied
 
 from .serializers import OfertasSerializer
 from .utils import Utils
@@ -19,7 +20,7 @@ def get_oferta(pk):
     try:
         return Ofertas.objects.get(pk=pk)
     except Ofertas.DoesNotExist:
-        raise Http404
+        raise NotFound(detail="Trampo não encontrado.")
 
 
 class CreateOfertaView():
@@ -37,7 +38,8 @@ class CreateOfertaView():
                     serializer.save(owner=request.user)
                     response.append(serializer.data)
                 else:
-                    return Response(serializer.error_messages, status=status.HTTP_400_BAD_REQUEST)
+                    raise ValidationError(detail="Não foi possível criar estes trampos, \
+                            verfique os dados informados e tente novamente.")
             task_send_nova_oferta_message.delay()
             return Response(response, status=status.HTTP_201_CREATED)
         else:
@@ -47,7 +49,8 @@ class CreateOfertaView():
                 serializer.save(owner=request.user)
                 task_send_nova_oferta_message.delay()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.error_messages, status=status.HTTP_400_BAD_REQUEST)
+            raise ValidationError(detail="Não foi possível criar este trampo, \
+                    verfique os dados informados e tente novamente.")
 
 
 class ListOfertaView():    
@@ -58,7 +61,7 @@ class ListOfertaView():
         if ofertas is not None :
             serializer = OfertasSerializer(ofertas, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        raise NotFound(detail="Não foi possível exibir os trampos.")
 
 
 class ProfileOfertaView():
@@ -69,7 +72,7 @@ class ProfileOfertaView():
         if ofertas is not None :
             serializer = OfertasSerializer(ofertas, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        raise NotFound(detail="Não foi possível exibir seus trampos.")
 
 
 class DetailOfertaView():
@@ -81,8 +84,8 @@ class DetailOfertaView():
             if oferta is not None :
                 serializer = OfertasSerializer(oferta)
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=403)
+            raise NotFound(detail="Não foi possível exibir os detalhes do trampo.")
+        raise PermissionDenied(detail=["Você não tem permissão para isso."])
 
 
 class UpdateOfertaView():
@@ -92,15 +95,17 @@ class UpdateOfertaView():
     def update(request, pk, format=None):
         oferta = get_oferta(pk)
         if oferta.edit == False:
-            return Response(status=400)
+            raise ValidationError(detail="Já existem freelancers interessados neste trampo. \
+                Ele não pode mais ser editado.")
         if IsOwnerOrReadOnly.has_object_permission(request, oferta):
             serializer = OfertasSerializer(oferta, data=request.data)
             if serializer.is_valid():
                 Utils.validator(serializer.validated_data)
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.error_messages, status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=403)
+            raise ValidationError(detail="Não foi possível atualizar este trampo, \
+                    verifique os dados informados e tente novamente.")
+        raise PermissionDenied(detail=["Você não tem permissão para isso."])
         
 
 class DeleteOfertaView():
@@ -113,5 +118,5 @@ class DeleteOfertaView():
                 oferta.delete()
                 return Response(status=status.HTTP_200_OK)
             except Exception:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=403)
+                raise ValidationError(detail="Algo deu errado.")
+        raise PermissionDenied(detail=["Você não tem permissão para isso."])

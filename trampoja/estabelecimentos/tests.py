@@ -103,7 +103,7 @@ class TestEstabelecimentosCreateView(TestEstabelecimentos):
         }
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         response = self.client.post("/estabelecimento/create", data)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
 
     def test_create_estabelecimento_post_error_telefone(self):
         data = {
@@ -115,7 +115,7 @@ class TestEstabelecimentosCreateView(TestEstabelecimentos):
         }
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         response = self.client.post("/estabelecimento/create", data)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
 
     def test_create_estabelecimento_post_error(self):
         data = {}

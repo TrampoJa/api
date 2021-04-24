@@ -118,7 +118,7 @@ class TestCanceladosCreateView(TestCancelados):
         }
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)    
         response = self.client.post("/cancelar", data)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
 
     def test_create_cancelados_post_error_date(self):
         data = {
@@ -129,7 +129,7 @@ class TestCanceladosCreateView(TestCancelados):
         }
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token2.key)    
         response = self.client.post("/cancelar", data)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
 
     def test_create_cancelados_post_error_confirmado(self):
         data = {

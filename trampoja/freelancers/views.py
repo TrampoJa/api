@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.exceptions import ValidationError, NotFound, PermissionDenied
 
 from .serializers import FreeLancersSerializer
 from .models import FreeLancers
@@ -22,7 +23,7 @@ def get_freelancer(pk):
     try:
         return FreeLancers.objects.get(pk=pk)
     except FreeLancers.DoesNotExist:
-        raise Http404
+        raise NotFound(detail="Freelancer não encontrado.")
 
 
 class CreateFreeLancerView():    
@@ -39,8 +40,8 @@ class CreateFreeLancerView():
             user.save()
             userSerializer = UserSerializer(user)
             return Response([serializer.data, userSerializer.data], status=status.HTTP_201_CREATED)
-        return Response(serializer.error_messages, status=status.HTTP_400_BAD_REQUEST)
-
+        raise ValidationError(detail="Não foi possível finalizar seu cadastro, \
+                verifique os dados informados e tente novamente")
 
 class ListFreeLancerView():
     @api_view(['GET'])
@@ -50,7 +51,7 @@ class ListFreeLancerView():
         if freelancers is not None :
             serializer = FreeLancersSerializer(freelancers, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        raise NotFound(detail="Não foi possível exibir os freelancers.")
 
 
 class ProfileFreeLancerView():
@@ -61,7 +62,7 @@ class ProfileFreeLancerView():
         if freelancer is not None :
             serializer = FreeLancersSerializer(freelancer)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        raise NotFound(detail="Não foi possível exibir seus dados.")
 
 
 class DetailFreeLancerView():
@@ -73,8 +74,8 @@ class DetailFreeLancerView():
             if freelancer is not None :
                 serializer = FreeLancersSerializer(freelancer)
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=403)
+            raise NotFound(detail="Não foi possível exibir seus dados.")
+        raise PermissionDenied(detail=["Você não tem permissão para isso."])
 
 
 class UpdateFreeLancerView():
@@ -89,8 +90,9 @@ class UpdateFreeLancerView():
                 Utils.validator(serializer.validated_data)
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.error_messages, status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=403)
+            raise ValidationError(detail="Não foi possível atualizar seus dados, \
+                    verifique os dados informados e tente novamente.")
+        raise PermissionDenied(detail=["Você não tem permissão para isso."])
 
 
 class DeleteFreeLancerView():
@@ -103,8 +105,8 @@ class DeleteFreeLancerView():
                 freelancer.delete()
                 return Response(status=status.HTTP_200_OK)
             except Exception:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=403)
+                raise ValidationError(detail="Algo deu errado.")
+        raise PermissionDenied(detail=["Você não tem permissão para isso."])
 
 
 class CountOfertasConfirmadasFreelancerView():
@@ -116,7 +118,7 @@ class CountOfertasConfirmadasFreelancerView():
             count = Confirmados.objects.filter(owner=freelancer.owner, oferta_id__closed=True).count()
             return Response(count)
         except Exception:
-            return Response({"error": "Não foi possíbel exibir o número de trampos"}, status=status.HTTP_400_BAD_REQUEST)
+            raise NotFound(detail="Não foi possíbel exibir o número de trampos")
 
 
 class HistoricoFreelancerView():
@@ -139,4 +141,4 @@ class HistoricoFreelancerView():
 
             return Response(historico)
         except Exception:
-            return Response({"error": "Não foi possível exibir o histórico"}, status=status.HTTP_400_BAD_REQUEST)
+            raise ValidationError(detail="Não foi possível exibir o histórico.")
