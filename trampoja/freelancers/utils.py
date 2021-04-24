@@ -1,6 +1,10 @@
-from django.http import *
 import datetime
+
+from django.http import *
 from django.utils import timezone
+
+from rest_framework.exceptions import ValidationError
+
 
 class Utils:
 
@@ -10,6 +14,6 @@ class Utils:
         time = datetime.date.today() + datetime.timedelta(weeks=-834) # 16 years
         
         if not telefone.isdecimal():
-            raise Http404
+            raise ValidationError(detail="Informe um telefone válido.")
         if nascimento >= time:
-            raise Http404
+            raise ValidationError(detail="Você precisa ter mais que 16 anos.")

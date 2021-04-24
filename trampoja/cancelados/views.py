@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.exceptions import ValidationError, NotFound, PermissionDenied
 
 from .serializers import CanceladosSerializer
 from .models import Cancelados
@@ -25,7 +26,7 @@ def get_cancelado(pk):
     try:
         return Cancelados.objects.get(pk=pk)
     except Cancelados.DoesNotExist:
-        raise Http404
+        raise NotFound(deatil="Cancelado não encontrado")
 
 
 class CreateCanceladoView():    
@@ -44,16 +45,13 @@ class CreateCanceladoView():
                 if hora_limite.time() > oferta.time:
                     oferta.closed = True
                     oferta.save()
-                    return Response(
-                        {"error": "Não foi possível cancelar oferta por \
-                            que passou da hora limite."},
-                        status=404)
+                    raise ValidationError(detail="Não foi possível cancelar trampo. \
+                            Só é possível cancelar com 6 horas de antecedência.")
             if oferta.date_inicial < datetime.date.today():
                 oferta.closed = True
                 oferta.save()
-                return Response(
-                    {"error": "Não foi possível cancelar oferta."},
-                    status=404)
+                raise ValidationError(detail="Não foi possível cancelar. \
+                        Esse trampo já aconteceu.")
             try:
                 c = Cancelados.objects.create(oferta=oferta, owner=freelancer.owner, autor=autor,
                     justificativa=request.data['justificativa'])   
@@ -76,8 +74,8 @@ class CreateCanceladoView():
                     )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             except Exception:
-               return Response(status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=403)
+               raise ValidationError(detail="Não foi possível cancelar este trampo.")
+        raise PermissionDenied(detail=["Você não tem permissão para isso."])
 
 
 class ListToFreelancerCanceladosView():
@@ -88,7 +86,7 @@ class ListToFreelancerCanceladosView():
         if cancelados is not None:
             serializer = CanceladosSerializer(cancelados, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        raise NotFound(detail="Não foi possível exibir os trampos cancelados.")
 
 
 class ListToEstabelecimentoCanceladosView():
@@ -99,4 +97,4 @@ class ListToEstabelecimentoCanceladosView():
         if cancelados is not None:
             serializer = CanceladosSerializer(cancelados, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        raise NotFound(detail="Não foi possível exibir os trampos cancelados.")

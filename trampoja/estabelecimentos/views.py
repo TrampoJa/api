@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.exceptions import ValidationError, NotFound, PermissionDenied
 
 from .serializers import EstabelecimentosSerializer
 from .models import Estabelecimentos
@@ -19,7 +20,7 @@ def get_estabelecimento(pk):
     try:
         return Estabelecimentos.objects.get(pk=pk)
     except Estabelecimentos.DoesNotExist:
-        raise Http404
+        raise NotFound(detail="Estabelecimento não encontrado.")
 
 
 class CreateEstabelecimentoView():  
@@ -36,7 +37,8 @@ class CreateEstabelecimentoView():
             user.save()
             userSerializer = UserSerializer(user)
             return Response([serializer.data, userSerializer.data], status=status.HTTP_201_CREATED)
-        return Response(serializer.error_messages, status=status.HTTP_400_BAD_REQUEST)
+        raise ValidationError(detail="Não foi possível finalizar seu cadastro, \
+                verifique os dados informados e tente novamente")
 
 
 class ListEstabelecimentoView():
@@ -47,7 +49,7 @@ class ListEstabelecimentoView():
         if estabelecimentos is not None :
             serializer = EstabelecimentosSerializer(estabelecimentos, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        raise NotFound(detail="Não foi possível exibir os estabelecimentos.")
 
 
 class ProfileEstabelecimentoView():
@@ -58,7 +60,7 @@ class ProfileEstabelecimentoView():
         if estabelecimento is not None :
             serializer = EstabelecimentosSerializer(estabelecimento)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        raise NotFound(detail="Não foi possível exibir seus dados.")
 
 
 class DetailEstabelecimentoView():
@@ -70,8 +72,8 @@ class DetailEstabelecimentoView():
             if estabelecimento is not None :
                 serializer = EstabelecimentosSerializer(estabelecimento)
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=403)
+            raise NotFound(detail="Não foi possível exibir seus dados.")
+        raise PermissionDenied(detail=["Você não tem permissão para isso."])
 
 
 class UpdateEstabelecimentoView():
@@ -86,8 +88,9 @@ class UpdateEstabelecimentoView():
                 Utils.validator(serializer.validated_data)
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.error_messages, status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=403)
+            raise ValidationError(detail="Não foi possível atualizar seus dados, \
+                    verifique os dados informados e tente novamente.")
+        raise PermissionDenied(detail=["Você não tem permissão para isso."])
 
 
 class DeleteEstabelecimentoView():
@@ -100,5 +103,5 @@ class DeleteEstabelecimentoView():
                 estabelecimento.delete()
                 return Response(status=status.HTTP_200_OK)
             except Exception:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=403)
+                raise ValidationError(detail="Algo deu errado.")
+        raise PermissionDenied(detail=["Você não tem permissão para isso."])

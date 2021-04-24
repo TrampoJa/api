@@ -54,7 +54,7 @@ class TestUsersCreateView(TestUsers):
             'last_name': 'Antunes'
         }
         response = self.client.post("/auth/register", data)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
 
     def test_create_users_post_error(self):
         data = {
@@ -65,7 +65,7 @@ class TestUsersCreateView(TestUsers):
             'last_name': ''
         }
         response = self.client.post("/auth/register", data)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
 
 
 class TestUsersProfileView(TestUsers):    
@@ -99,7 +99,7 @@ class TestChangeEmailView(TestUsers):
         }
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)    
         response = self.client.put("/auth/set-email", data)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
 
     def test_set_email_post_sucess(self):
         data = {
@@ -125,7 +125,7 @@ class TestChangePasswordView(TestUsers):
         }
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)    
         response = self.client.post("/auth/set-password", data)
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 400)
 
     def test_set_password_error(self):
         data = {
@@ -177,7 +177,7 @@ class TestLogin(TestCase):
             'password': ''
         }
         response = self.client.post("/login/", data)
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 403)
 
     def test_login_error_password(self):
         
@@ -186,7 +186,7 @@ class TestLogin(TestCase):
             'password': ''
         }
         response = self.client.post("/login/", data)
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 403)
 
     def test_login_error_username(self):
         
@@ -195,4 +195,4 @@ class TestLogin(TestCase):
             'password': self.writer.password
         }
         response = self.client.post("/login/", data)
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 403)

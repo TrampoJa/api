@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.exceptions import ValidationError, NotFound, PermissionDenied
 
 from .serializers import InteressesSerializer
 from .models import Interesses
@@ -18,7 +19,7 @@ def get_interesse(pk):
     try:
         return Interesses.objects.get(pk=pk)
     except Interesses.DoesNotExist:
-        raise Http404
+        raise NotFound(detail="Interesse não encontrado.")
 
 
 class CreateInteresseView():
@@ -29,7 +30,7 @@ class CreateInteresseView():
         if IsFreelancerOrReadOnly.has_object_permission(request):
             oferta = get_oferta(request.data['id'])
             if Interesses.objects.filter(oferta=oferta, owner=request.user):
-                return Response(status=400)
+                raise ValidationError(detail="Você já demonstrou interesse nesse trampo.")
             try:
                 i = Interesses.objects.create(oferta=oferta, owner=request.user)
                 oferta.edit = False
@@ -42,8 +43,8 @@ class CreateInteresseView():
                 )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             except Exception:
-                return Response(serializer.error_messages, status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=403)
+                raise ValidationError(detail="Não foi possível demonstrar interesse neste trampo.")
+        raise PermissionDenied(detail=["Você não tem permissão para isso."])
 
 
 class ListToFreelancerInteresseView():
@@ -54,7 +55,7 @@ class ListToFreelancerInteresseView():
         if interesses is not None:
             serializer = InteressesSerializer(interesses, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        raise NotFound(detail="Não foi possível exibir seus interesses.")
 
 
 class ListToEstabelecimentoInteresseView():
@@ -65,4 +66,4 @@ class ListToEstabelecimentoInteresseView():
         if interesses is not None:
             serializer = InteressesSerializer(interesses, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        raise NotFound(detail="Não foi possível exibir seus interesses.")
