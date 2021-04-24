@@ -26,7 +26,7 @@ def get_cancelado(pk):
     try:
         return Cancelados.objects.get(pk=pk)
     except Cancelados.DoesNotExist:
-        raise NotFound(deatil="Cancelado não encontrado")
+        raise NotFound(deatil="Cancelado não encontrado.")
 
 
 class CreateCanceladoView():    
