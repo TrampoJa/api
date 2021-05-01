@@ -131,6 +131,6 @@ class Login():
                 serializer = UserSerializer(user)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else :
-               raise ValidationError(detail="Não foi possível fazer login.")
+               raise NotAuthenticated(detail="Não foi possível fazer login.")
         except Exception:
-            raise NotAuthenticated(detail=["Email ou senha inválidos."])
+            raise ValidationError(detail=["Email ou senha inválidos."])

@@ -177,7 +177,7 @@ class TestLogin(TestCase):
             'password': ''
         }
         response = self.client.post("/login/", data)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 400)
 
     def test_login_error_password(self):
         
@@ -186,7 +186,7 @@ class TestLogin(TestCase):
             'password': ''
         }
         response = self.client.post("/login/", data)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 400)
 
     def test_login_error_username(self):
         
@@ -195,4 +195,4 @@ class TestLogin(TestCase):
             'password': self.writer.password
         }
         response = self.client.post("/login/", data)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 400)
