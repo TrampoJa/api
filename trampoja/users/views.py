@@ -9,8 +9,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.authentication import TokenAuthentication
-from rest_framework import generics
 from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import ValidationError, NotFound, NotAuthenticated
 
 from .serializers import UserSerializer
 from .utils import Utils
@@ -21,7 +21,7 @@ def get_user(pk):
     try:
         return User.objects.get(pk=pk)
     except User.DoesNotExist:
-        raise Http404
+        raise NotFound(detail="Usuário não encontrado.")
 
 
 class CreateUserView():      
@@ -45,7 +45,8 @@ class CreateUserView():
             task_send_welcome_message.delay(user.email, user.first_name)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            raise ValidationError(detail="Não foi possível realizar cadastro, \
+                    verfique os dados informados e tente novamente.")
 
 
 class ProfileUserView(): 
@@ -56,7 +57,7 @@ class ProfileUserView():
         if user is not None :
             serializer = UserSerializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        raise NotFound(detail="Não foi possível exibir seus dados.")
 
 
 class DetailUserView(): 
@@ -67,7 +68,7 @@ class DetailUserView():
         if user is not None :
             serializer = UserSerializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        raise NotFound(detail="Não foi possível exibir os detalhes do usuário.")
 
 
 class ChangeEmailView(): 
@@ -83,7 +84,7 @@ class ChangeEmailView():
             user.save()
             return Response(user.username, status=status.HTTP_200_OK)
         except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            raise ValidationError(detail="Não foi possível alterar seu email.")
 
 
 class ChangePasswordView():
@@ -98,7 +99,7 @@ class ChangePasswordView():
             user.save()
             return Response({'success': 'success'}, status=status.HTTP_200_OK)
         except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            raise ValidationError(detail="Não foi possível alterar sua senha.")
 
 
 class RecoveryPasswordView():
@@ -114,7 +115,7 @@ class RecoveryPasswordView():
             user.save()
             return Response({"success": "success"}, status=200)
         except Exception:
-            return Response({"error": "Este email não está cadastrado."}, status=404)
+            raise NotFound(detail="Este email não está cadastrado.")
 
 
 class Login():
@@ -130,6 +131,6 @@ class Login():
                 serializer = UserSerializer(user)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else :
-                return Response(serializer.error_messages, status=status.HTTP_400_BAD_REQUEST)
+               raise NotAuthenticated(detail="Não foi possível fazer login.")
         except Exception:
-            return Response(status=401)
+            raise ValidationError(detail=["Email ou senha inválidos."])

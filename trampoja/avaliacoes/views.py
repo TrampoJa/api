@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.exceptions import ValidationError, NotFound
 
 from .serializers import AvaliacoesSerializer
 from .models import Avaliacoes
@@ -19,7 +20,7 @@ def get_avaliacao(pk):
     try:
         return Avaliacoes.objects.get(pk=pk)
     except Avaliacoes.DoesNotExist:
-        raise Http404
+        raise NotFound(detail="Avalição não encontrada.")
 
 
 class CreateAvaliacaoView():
@@ -30,7 +31,7 @@ class CreateAvaliacaoView():
         owner = get_user(request.data['owner'])
         oferta = get_oferta(request.data['oferta'])
         if Avaliacoes.objects.filter(owner=owner, oferta=oferta):
-            return Response(status=400)
+            raise ValidationError(detail="Ops, você já avaliou este trampo!")
         try:   
             a = Avaliacoes.objects.create(owner=owner, oferta=oferta, nota=request.data['nota'])
             oferta.closed = True
@@ -38,7 +39,7 @@ class CreateAvaliacaoView():
             serializer = AvaliacoesSerializer(a)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            raise ValidationError(detail="Ops, não foi possível avaliar este trampos!")
 
 
 class GetSelfAvaliacaoView():
@@ -49,4 +50,4 @@ class GetSelfAvaliacaoView():
             avaliacoes = Avaliacoes.objects.filter(owner=request.user.pk).aggregate(Avg('nota'))
             return Response(avaliacoes['nota__avg'], status=status.HTTP_200_OK)
         except Avaliacoes.DoesNotExist:
-            return Response(status=status.Http404)
+            raise NotFound(detail="Avalição não encontrada.")

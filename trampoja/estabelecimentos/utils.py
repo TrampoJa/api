@@ -1,6 +1,9 @@
-from django.http import *
 import datetime
+
+from django.http import *
 from django.utils import timezone
+
+from rest_framework.exceptions import ValidationError
 
 class Utils:
 
@@ -9,6 +12,6 @@ class Utils:
         cpf_cnpj = data['cpf_cnpj']
 
         if not telefone.isdecimal():
-            raise Http404
+            raise ValidationError(detail="Informe um telefone válido.")
         if not cpf_cnpj.isdecimal():
-            raise Http404
+            raise ValidationError(detail="Informe um cpf ou cnpj válido.")
