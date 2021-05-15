@@ -1,9 +1,5 @@
 from django.db import models
-from django.utils import timezone
-from django.dispatch import receiver
-from django.db.models.signals import post_save
-from django.contrib.auth.models import User
-
+from planos.models import Planos
 
 def upload_path(instance, filename):
     return ''.join(['logos/', str(instance.owner)+'/', filename])
@@ -54,6 +50,19 @@ class Estabelecimentos(models.Model):
         null = True,
 		blank = True,
         upload_to = upload_path
+    )
+
+    plano_contratado = models.ForeignKey(
+        Planos,
+        on_delete=models.CASCADE,
+        null  = True,
+        blank = True
+    )
+
+    ofertas_para_publicar = models.IntegerField(
+        default = 0,
+        null  = True,
+        blank = True 
     )
 
     create = models.DateTimeField(auto_now_add=True)

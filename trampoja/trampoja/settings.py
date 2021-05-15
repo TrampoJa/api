@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'avaliacoes',
     'enderecos',
     'cancelados',
-    'mensagens'
+    'mensagens',
+    'planos'
 ]
 
 MIDDLEWARE = [

@@ -1,7 +1,5 @@
 from rest_framework import serializers
-from users.models import User
-from ofertas.models import Ofertas
-from enderecos.models import Enderecos
+from .models import Ofertas
 from avaliacoes.models import Avaliacoes
 from django.db.models import Avg
 
