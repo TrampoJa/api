@@ -5,11 +5,14 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, ValidationError, PermissionDenied
 
 from .serializers import PlanosSerializer
+from .permissions import IsEstabelecimentoOrReadOnly
 from .models import Planos
 
+from estabelecimentos.views import get_estabelecimento
+from estabelecimentos.serializers import EstabelecimentosSerializer
 
 def get_plano(pk):
     try:
@@ -23,7 +26,24 @@ class setPlanoEstabelecimento():
     @api_view(['POST'])
     @authentication_classes([TokenAuthentication])
     def create(request, format=None):
-        pass
+        estabelecimento = get_estabelecimento(request.data['estabelecimento'])
+        plano = get_plano(request.data['plano'])
+        if IsEstabelecimentoOrReadOnly.has_object_permission(request):
+
+            # Aqui será a chamada do gateway de pagamento
+            # O parametro estabelecimento será para buscar os dados da compra, cartão etc
+            # O parametro plano será para buscar o valor a ser cobrado
+            # Se der tudo certo continua e seta o plano para o estabelecimento
+            
+            try:
+                estabelecimento.plano_contratado = plano
+                estabelecimento.ofertas_para_publicar = plano.quantidade
+                estabelecimento.save()
+                e = EstabelecimentosSerializer(e)
+                return Response(e)
+            except Exception:
+                raise ValidationError("Não foi possível definir seu plano.")
+        raise PermissionDenied(detail=["Você não tem permissão para isso."])   
 
 
 class ListPlanosView():    
