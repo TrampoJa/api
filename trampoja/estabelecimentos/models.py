@@ -1,5 +1,6 @@
 from django.db import models
 from planos.models import Planos
+from .managers import EstabelecimentoManager
 
 def upload_path(instance, filename):
     return ''.join(['logos/', str(instance.owner)+'/', filename])
@@ -64,6 +65,8 @@ class Estabelecimentos(models.Model):
         null  = True,
         blank = True 
     )
+
+    manager = EstabelecimentoManager()
 
     create = models.DateTimeField(auto_now_add=True)
 

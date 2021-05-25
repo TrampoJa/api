@@ -1,5 +1,5 @@
 from django.db import models
-
+from .managers import PlanosManager
 
 class Planos(models.Model):
     
@@ -31,6 +31,8 @@ class Planos(models.Model):
     )
 
     create = models.DateTimeField(auto_now_add=True)
+
+    manager = PlanosManager()
 
     def __str__(self):
         return self.nome.lower().capitalize()

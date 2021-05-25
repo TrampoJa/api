@@ -16,6 +16,7 @@ from .permissions import IsOwnerOrReadOnly
 from .tasks import task_send_nova_oferta_message
 
 from estabelecimentos.models import Estabelecimentos
+from estabelecimentos.serializers import EstabelecimentosSerializer
 
 
 def get_oferta(pk):
@@ -29,12 +30,15 @@ class CreateOfertaView():
     @csrf_protect
     @api_view(['POST'])
     @authentication_classes([TokenAuthentication])
-    def create(request, format=None):
-        estabelecimento = Estabelecimentos.objects.filter(owner=request.user)
+    def create(request, format=None): # Criar permissão de estabelecimento
+        estabelecimento = Estabelecimentos.manager.get(owner=request.user)
+
         if estabelecimento.ofertas_para_publicar == 0:
             raise ValidationError("Você não possui trampos para publicar.")
+
         freelancers = int(request.data['freelancers'])
         response = []
+        
         if freelancers > 1:
             for i in range(freelancers):
                 serializer = OfertasSerializer(data=request.data)
@@ -46,6 +50,7 @@ class CreateOfertaView():
                 else:
                     raise ValidationError(detail="Não foi possível criar estes trampos, \
                             verfique os dados informados e tente novamente.")
+                            
             task_send_nova_oferta_message.delay()
             return Response(response, status=status.HTTP_201_CREATED)
         else:
