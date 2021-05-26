@@ -1,5 +1,4 @@
 import re
-from django.http import regex_com_br
 from rest_framework.exceptions import ValidationError
 
 
@@ -10,10 +9,8 @@ class Utils:
             raise ValidationError(detail='Senha inválida.')
 
     def email_validator(self, email):
-        regex_com = '^[\w\.-]+@(?:[\w-]+\.)+[\w-]{2,4}$'
-        if re.search(regex_com, email) or re.search(regex_com_br, email):
-            pass
-        else:
+        regex = '^[\w\.-]+@(?:[\w-]+\.)+[\w-]{2,4}$'
+        if not re.search(regex, email):
             raise ValidationError(detail='Email inválido')
 
     def validator(self, email, password):
