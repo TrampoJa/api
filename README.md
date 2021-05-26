@@ -42,13 +42,6 @@ $ python3.8 get-pip.py
 $ mkdir -p ~/.www
 $ cd ~/.www
 $ git clone https://github.com/TrampoJa/api.trampoja.com
-$ git clone https://github.com/TrampoJa/app.trampoja.com
-
-# Adicionando bibliotecas node
-$ cd ~/.www/app.trampoja.com
-$ curl -fsSL https://deb.nodesource.com/setup_14.x | bash -
-$ npm install -g @angular/cli
-$ npm install --save-dev @angular-devkit/build-angular
 
 # Instalando virtual env e bibliotecas para o python
 $ cd ~/.www/api.trampoja.com
@@ -59,17 +52,13 @@ $ pip3.8 install -U django djangorestframework httpie pillow requests django-cor
 $ deactivate
 
 $ apt install postgresql postgresql-contrib
-echo "
-psql
-CREATE DATABASE trampoja;
-CREATE USER tj_user WITH PASSWORD 'Gtr400@@';
-ALTER ROLE tj_user SET client_encoding TO 'utf8';
-ALTER ROLE tj_user SET default_transaction_isolation TO 'read committed';
-ALTER ROLE tj_user SET timezone TO 'UTC';
-GRANT ALL PRIVILEGES ON DATABASE trampoja TO tj_user;
-"
 $ su - postgres
-$ cd /var/lib/postgresql
-$ git clone https://github.com/TrampoJa/backup-database-trampoja.git
 
+$ psql
+$ CREATE DATABASE trampoja;
+$ CREATE USER tj_user WITH PASSWORD 'Gtr400@@';
+$ ALTER ROLE tj_user SET client_encoding TO 'utf8';
+$ ALTER ROLE tj_user SET default_transaction_isolation TO 'read committed';
+$ ALTER ROLE tj_user SET timezone TO 'UTC';
+$ GRANT ALL PRIVILEGES ON DATABASE trampoja TO tj_user;
 ```
