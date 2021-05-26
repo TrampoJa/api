@@ -1,6 +1,7 @@
 from django.db import models
 from .managers import PlanosManager
 
+
 class Planos(models.Model):
     
     nome = models.CharField(

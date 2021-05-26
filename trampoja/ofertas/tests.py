@@ -10,7 +10,7 @@ from rest_framework.authtoken.models import Token
 from ofertas.models import Ofertas
 from ofertas.serializers import OfertasSerializer
 
-from users.views import User
+from django.contrib.auth.models import User
 
 from estabelecimentos.models import Estabelecimentos
 

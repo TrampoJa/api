@@ -33,7 +33,7 @@ class setPlanoEstabelecimento():
             except Exception:
                 raise ValidationError("Não foi possível definir seu plano.")
 
-        raise PermissionDenied(detail=["Você não tem permissão para isso."])   
+        raise PermissionDenied(detail=["Você não tem permissão para isso."])
 
 
 class ListPlanosView():    
