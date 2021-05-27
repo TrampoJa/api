@@ -44,9 +44,11 @@ class CreateOfertaView():
                 serializer = OfertasSerializer(data=request.data)
                 if serializer.is_valid():
                     Utils.validator(serializer.validated_data)
-                    serializer.save(owner=request.user)
-                    response.append(serializer.data)
-                    estabelecimento.ofertas_para_publicar = estabelecimento.ofertas_para_publicar - 1
+                    if estabelecimento.ofertas_para_publicar > 0:
+                        serializer.save(owner=request.user)
+                        response.append(serializer.data)
+                        estabelecimento.ofertas_para_publicar = estabelecimento.ofertas_para_publicar - 1
+                        estabelecimento.save()
                 else:
                     raise ValidationError(detail="Não foi possível criar estes trampos, \
                             verfique os dados informados e tente novamente.")
@@ -59,6 +61,7 @@ class CreateOfertaView():
                 Utils.validator(serializer.validated_data)
                 serializer.save(owner=request.user)
                 estabelecimento.ofertas_para_publicar = estabelecimento.ofertas_para_publicar - 1
+                estabelecimento.save()
                 task_send_nova_oferta_message.delay()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             raise ValidationError(detail="Não foi possível criar este trampo, \
