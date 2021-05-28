@@ -1,4 +1,3 @@
-from django.http import *
 from django.views.decorators.csrf import csrf_protect
 
 from rest_framework.response import Response
@@ -9,7 +8,7 @@ from rest_framework.exceptions import ValidationError, NotFound, PermissionDenie
 
 from .serializers import FreeLancersSerializer
 from .models import FreeLancers
-from .utils import Utils
+from .utils import Validator
 from .permissions import IsOwnerOrReadOnly
 
 from users.views import get_user
@@ -34,7 +33,7 @@ class CreateFreeLancerView():
         user = get_user(request.user.id)
         serializer = FreeLancersSerializer(data=request.data)
         if serializer.is_valid():
-            Utils.validator(serializer.validated_data)
+            Validator(serializer.validated_data)
             serializer.save(owner=request.user)
             user.last_name = "Freelancer"
             user.save()
@@ -89,7 +88,7 @@ class UpdateFreeLancerView():
         if IsOwnerOrReadOnly.has_object_permission(request, freelancer):
             serializer = FreeLancersSerializer(freelancer, data=request.data)
             if serializer.is_valid():
-                Utils.validator(serializer.validated_data)
+                Validator(serializer.validated_data)
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
             raise ValidationError(detail="Não foi possível atualizar seus dados, \

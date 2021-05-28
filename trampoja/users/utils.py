@@ -1,18 +1,25 @@
-import re
 from rest_framework.exceptions import ValidationError
+from re import search
 
 
-class Utils:
+class Validator:
 
-    def password_validator(self, password):
+    def __init__(self, data=None):
+        if data is not None:
+            self.password(data['password'])
+            self.email(data['email'])
+
+    def password(self, password):
         if len(password) < 6:
             raise ValidationError(detail='Senha inválida.')
 
-    def email_validator(self, email):
-        regex = '^[\w\.-]+@(?:[\w-]+\.)+[\w-]{2,4}$'
-        if not re.search(regex, email):
+    def email(self, email):
+        regex = r'^[\w\.-]+@(?:[\w-]+\.)+[\w-]{2,4}$'
+        if not search(regex, email):
             raise ValidationError(detail='Email inválido')
 
-    def validator(self, email, password):
-        self.password_validator(password)
-        self.email_validator(email)
+
+class Formater:
+    pass
+
+# first name && last name
