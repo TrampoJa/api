@@ -85,7 +85,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'trampoja.wsgi.application'
 
 CORS_ORIGIN_WHITELIST = (
-    'http://localhost:4200',
+    'https://beta.trampoja.com',
 )
 
 
