@@ -25,7 +25,7 @@ SECRET_KEY = 'tn!4a4qgooym1--qqtsf*)a3_veuggmhogkejiv!ey=p8xwtov'
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'app.trampoja.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'beta.trampoja.com']
 
 # Application definition
 
