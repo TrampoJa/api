@@ -85,7 +85,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'trampoja.wsgi.application'
 
 CORS_ORIGIN_WHITELIST = (
-    'https://beta.trampoja.com',
+    'https://app.trampoja.com',
 )
 
 
