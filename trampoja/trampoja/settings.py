@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os, sys
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -19,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'tn!4a4qgooym1--qqtsf*)a3_veuggmhogkejiv!ey=p8xwtov'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
@@ -104,12 +107,12 @@ if 'test' in sys.argv:
 else:
     DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'trampoja',
-        'USER': 'tj_user',
-        'PASSWORD': 'Gtr400@@',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'ENGINE': os.getenv('DB_ENGINE'),
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
     }
 }
 
@@ -141,13 +144,13 @@ REST_FRAMEWORK = {
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-EMAIL_HOST = 'mail.trampoja.com'
+EMAIL_HOST = os.getenv('SMTP_HOST')
 
-EMAIL_HOST_USER = 'contato@trampoja.com'
+EMAIL_HOST_USER = os.getenv('SMTP_USER')
 
-EMAIL_HOST_PASSWORD = 'SemMigue@10'
+EMAIL_HOST_PASSWORD = os.getenv('SMTP_PASSWORD')
 
-EMAIL_PORT = '587'
+EMAIL_PORT = os.getenv('SMTP_PORT')
 
 EMAIL_USE_TLS = True
 
