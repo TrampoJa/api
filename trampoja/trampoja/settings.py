@@ -23,9 +23,9 @@ SECRET_KEY = 'tn!4a4qgooym1--qqtsf*)a3_veuggmhogkejiv!ey=p8xwtov'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'beta.trampoja.com']
+ALLOWED_HOSTS = []
 
 # Application definition
 
