@@ -1,22 +1,25 @@
-import re
-from django.http import *
 from rest_framework.exceptions import ValidationError
+from re import search
 
 
-class Utils:
+class Validator:
 
-    def password_validator(self, password):
+    def __init__(self, data=None):
+        if data is not None:
+            self.password(data['password'])
+            self.email(data['email'])
+
+    def password(self, password):
         if len(password) < 6:
-            raise ValidationError(detail="Senha inválida.")
+            raise ValidationError(detail='Senha inválida.')
 
-    def email_validator(self, email):
-        regex_com = '^[a-z0-9]+[\._]?[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-        regex_com_br = '^[a-z0-9]+[\._]?[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}\w+[.]\w{2,3}$'
-        if re.search(regex_com, email) or re.search(regex_com_br, email):
-            pass
-        else:    
-            raise ValidationError(detail="Email inválido")
+    def email(self, email):
+        regex = r'^[\w\.-]+@(?:[\w-]+\.)+[\w-]{2,4}$'
+        if not search(regex, email):
+            raise ValidationError(detail='Email inválido')
 
-    def validator(self, email, password):
-        self.password_validator(password)
-        self.email_validator(email)
+
+class Formater:
+    pass
+
+# first name && last name

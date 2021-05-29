@@ -27,7 +27,6 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'app.trampoja.com']
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -49,7 +48,9 @@ INSTALLED_APPS = [
     'avaliacoes',
     'enderecos',
     'cancelados',
-    'mensagens'
+    'mensagens',
+    'planos',
+    'planos_historico'
 ]
 
 MIDDLEWARE = [
