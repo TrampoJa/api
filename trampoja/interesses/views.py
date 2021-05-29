@@ -19,7 +19,7 @@ def get_interesse(pk):
     try:
         return Interesses.objects.get(pk=pk)
     except Interesses.DoesNotExist:
-        raise Interesse não encontrado.")
+        raise NotFound(detail=["Interesse não encontrado."])
 
 
 class CreateInteresseView():
