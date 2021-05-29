@@ -15,6 +15,9 @@ from .models import Ofertas
 from .permissions import IsOwnerOrReadOnly
 from .tasks import task_send_nova_oferta_message
 
+from estabelecimentos.models import Estabelecimentos
+from estabelecimentos.serializers import EstabelecimentosSerializer
+
 
 def get_oferta(pk):
     try:
@@ -27,19 +30,29 @@ class CreateOfertaView():
     @csrf_protect
     @api_view(['POST'])
     @authentication_classes([TokenAuthentication])
-    def create(request, format=None):
+    def create(request, format=None): # Criar permissão de estabelecimento
+        estabelecimento = Estabelecimentos.manager.get(owner=request.user)
+
+        if estabelecimento.ofertas_para_publicar == 0:
+            raise ValidationError("Você não possui trampos para publicar.")
+
         freelancers = int(request.data['freelancers'])
         response = []
+        
         if freelancers > 1:
             for i in range(freelancers):
                 serializer = OfertasSerializer(data=request.data)
                 if serializer.is_valid():
                     Utils.validator(serializer.validated_data)
-                    serializer.save(owner=request.user)
-                    response.append(serializer.data)
+                    if estabelecimento.ofertas_para_publicar > 0:
+                        serializer.save(owner=request.user)
+                        response.append(serializer.data)
+                        estabelecimento.ofertas_para_publicar = estabelecimento.ofertas_para_publicar - 1
+                        estabelecimento.save()
                 else:
                     raise ValidationError(detail="Não foi possível criar estes trampos, \
                             verfique os dados informados e tente novamente.")
+                            
             task_send_nova_oferta_message.delay()
             return Response(response, status=status.HTTP_201_CREATED)
         else:
@@ -47,6 +60,8 @@ class CreateOfertaView():
             if serializer.is_valid():
                 Utils.validator(serializer.validated_data)
                 serializer.save(owner=request.user)
+                estabelecimento.ofertas_para_publicar = estabelecimento.ofertas_para_publicar - 1
+                estabelecimento.save()
                 task_send_nova_oferta_message.delay()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             raise ValidationError(detail="Não foi possível criar este trampo, \

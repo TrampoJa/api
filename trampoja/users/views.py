@@ -1,6 +1,5 @@
 from random import randint
 
-from django.http import *
 from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.models import User
@@ -13,7 +12,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import ValidationError, NotFound, NotAuthenticated
 
 from .serializers import UserSerializer
-from .utils import Utils
+from .utils import Validator
 from .tasks import task_send_welcome_message, task_send_recovery_message
 
 
@@ -24,23 +23,21 @@ def get_user(pk):
         raise NotFound(detail="Usuário não encontrado.")
 
 
-class CreateUserView():      
+class CreateUserView():
     @csrf_protect
     @api_view(['POST'])
     def create(request, format=None):
-        Utils().validator(
-            email = request.data['email'], 
-            password = request.data['password']
-        )
+        Validator(request.data)
         try:
             user = User.objects.create_user(
                 request.data['username'],
                 request.data['email'],
                 request.data['password'],
             )
-            user.first_name = request.data['first_name'] + ' ' + request.data['last_name']
+            user.first_name = request.data['first_name'] + \
+                ' ' + request.data['last_name']
             user.save()
-            token = Token.objects.create(user=user)
+            Token.objects.create(user=user)
             serializer = UserSerializer(user)
             task_send_welcome_message.delay(user.email, user.first_name)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -49,34 +46,35 @@ class CreateUserView():
                     verfique os dados informados e tente novamente.")
 
 
-class ProfileUserView(): 
+class ProfileUserView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
     def profile(request, format=None):
         user = get_user(request.user.pk)
-        if user is not None :
+        if user is not None:
             serializer = UserSerializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
         raise NotFound(detail="Não foi possível exibir seus dados.")
 
 
-class DetailUserView(): 
+class DetailUserView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
     def detail(request, pk, format=None):
         user = get_user(pk)
-        if user is not None :
+        if user is not None:
             serializer = UserSerializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        raise NotFound(detail="Não foi possível exibir os detalhes do usuário.")
+        raise NotFound(
+            detail="Não foi possível exibir os detalhes do usuário.")
 
 
-class ChangeEmailView(): 
+class ChangeEmailView():
     @csrf_protect
     @api_view(['PUT', 'POST'])
     @authentication_classes([TokenAuthentication])
     def setEmail(request, format=None):
-        Utils().email_validator(email=request.data['email'])    
+        Validator().email(request.data['email'])
         try:
             user = request.user
             user.email = request.data['email']
@@ -92,7 +90,7 @@ class ChangePasswordView():
     @api_view(['PUT', 'POST'])
     @authentication_classes([TokenAuthentication])
     def setPassword(request, format=None):
-        Utils().password_validator(password=request.data['password'])
+        Validator().password(request.data['password'])
         try:
             user = request.user
             user.set_password(request.data['password'])
@@ -111,7 +109,8 @@ class RecoveryPasswordView():
             user = User.objects.get(username=request.data['email'])
             new_password = str(randint(100000, 999999))
             user.set_password(new_password)
-            task_send_recovery_message.delay(user.email, user.first_name, new_password)
+            task_send_recovery_message.delay(
+                user.email, user.first_name, new_password)
             user.save()
             return Response({"success": "success"}, status=200)
         except Exception:
@@ -130,7 +129,7 @@ class Login():
                 login(request, user)
                 serializer = UserSerializer(user)
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            else :
-               raise NotAuthenticated(detail="Não foi possível fazer login.")
+            else:
+                raise NotAuthenticated(detail="Não foi possível fazer login.")
         except Exception:
             raise ValidationError(detail=["Email ou senha inválidos."])

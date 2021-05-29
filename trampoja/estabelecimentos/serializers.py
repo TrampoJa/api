@@ -25,5 +25,6 @@ class EstabelecimentosSerializer(serializers.ModelSerializer):
             'cidade',
             'rua',
             'numero',
-            'bairro'
+            'bairro',
+            'ofertas_para_publicar'
         ]

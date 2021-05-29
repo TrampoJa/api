@@ -1,12 +1,18 @@
+import datetime
+
 from django.test import TestCase
-from users.views import User
-from ofertas.models import Ofertas
-from ofertas.serializers import OfertasSerializer
+from django.http import *
+from django.utils import timezone
+
 from rest_framework.test import APIClient
 from rest_framework.authtoken.models import Token
-from django.http import *
-import datetime
-from django.utils import timezone
+
+from ofertas.models import Ofertas
+from ofertas.serializers import OfertasSerializer
+
+from django.contrib.auth.models import User
+
+from estabelecimentos.models import Estabelecimentos
 
 
 class TestOfertas(TestCase):
@@ -42,6 +48,28 @@ class TestOfertas(TestCase):
         )
         self.oferta2.save()
         self.date = datetime.date.today()
+
+        self.estabelecimento = Estabelecimentos(
+            nome = 'Teste',
+            cpf_cnpj = '09992622970',
+            razao_social = 'TESTE',
+            tipo = 'bodega',
+            telefone = '049999950411',
+            ofertas_para_publicar = 1,
+            owner = self.writer
+        )
+        self.estabelecimento.save()
+
+        self.estabelecimento2 = Estabelecimentos(
+            nome = 'Teste',
+            cpf_cnpj = '09992622971',
+            razao_social = 'TESTE',
+            tipo = 'bodega',
+            telefone = '049999950411',
+            ofertas_para_publicar = 0,
+            owner = self.writer2
+        )
+        self.estabelecimento2.save()
 
 
 class TestOfertasCreateView(TestOfertas):
@@ -94,6 +122,19 @@ class TestOfertasCreateView(TestOfertas):
             'freelancers': 1
         }
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        response = self.client.post("/ofertas/create", data)
+        self.assertEqual(response.status_code, 400)
+
+    def test_create_ofertas_post_error_ofertas_para_publicar(self):
+        data = {
+            'nome': 'Garcom',
+            'valor': 50,
+            'time': '18:00',
+            'date_inicial': self.date,
+            'obs': 'Chegar 10 minutos antes do horário',
+            'freelancers': 1
+        }
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token2.key)
         response = self.client.post("/ofertas/create", data)
         self.assertEqual(response.status_code, 400)
 

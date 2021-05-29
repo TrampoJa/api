@@ -1,4 +1,3 @@
-from django.http import *
 from django.views.decorators.csrf import csrf_protect
 
 from rest_framework.response import Response
@@ -9,7 +8,7 @@ from rest_framework.exceptions import ValidationError, NotFound, PermissionDenie
 
 from .serializers import FreeLancersSerializer
 from .models import FreeLancers
-from .utils import Utils
+from .utils import Validator
 from .permissions import IsOwnerOrReadOnly
 
 from users.views import get_user
@@ -26,7 +25,7 @@ def get_freelancer(pk):
         raise NotFound(detail="Freelancer não encontrado.")
 
 
-class CreateFreeLancerView():    
+class CreateFreeLancerView():
     @csrf_protect
     @api_view(['POST'])
     @authentication_classes([TokenAuthentication])
@@ -34,21 +33,23 @@ class CreateFreeLancerView():
         user = get_user(request.user.id)
         serializer = FreeLancersSerializer(data=request.data)
         if serializer.is_valid():
-            Utils.validator(serializer.validated_data)
+            Validator(serializer.validated_data)
             serializer.save(owner=request.user)
             user.last_name = "Freelancer"
             user.save()
             userSerializer = UserSerializer(user)
-            return Response([serializer.data, userSerializer.data], status=status.HTTP_201_CREATED)
+            return Response([serializer.data, userSerializer.data],
+                            status=status.HTTP_201_CREATED)
         raise ValidationError(detail="Não foi possível finalizar seu cadastro, \
                 verifique os dados informados e tente novamente")
+
 
 class ListFreeLancerView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
     def liste(request, format=None):
         freelancers = FreeLancers.objects.all()
-        if freelancers is not None :
+        if freelancers is not None:
             serializer = FreeLancersSerializer(freelancers, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
         raise NotFound(detail="Não foi possível exibir os freelancers.")
@@ -59,7 +60,7 @@ class ProfileFreeLancerView():
     @authentication_classes([TokenAuthentication])
     def profile(request, format=None):
         freelancer = FreeLancers.objects.get(owner_id=request.user.pk)
-        if freelancer is not None :
+        if freelancer is not None:
             serializer = FreeLancersSerializer(freelancer)
             return Response(serializer.data, status=status.HTTP_200_OK)
         raise NotFound(detail="Não foi possível exibir seus dados.")
@@ -71,7 +72,7 @@ class DetailFreeLancerView():
     def detail(request, pk, format=None):
         freelancer = get_freelancer(pk)
         if IsOwnerOrReadOnly.has_object_permission(request, freelancer):
-            if freelancer is not None :
+            if freelancer is not None:
                 serializer = FreeLancersSerializer(freelancer)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             raise NotFound(detail="Não foi possível exibir seus dados.")
@@ -87,7 +88,7 @@ class UpdateFreeLancerView():
         if IsOwnerOrReadOnly.has_object_permission(request, freelancer):
             serializer = FreeLancersSerializer(freelancer, data=request.data)
             if serializer.is_valid():
-                Utils.validator(serializer.validated_data)
+                Validator(serializer.validated_data)
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
             raise ValidationError(detail="Não foi possível atualizar seus dados, \
@@ -115,10 +116,12 @@ class CountOfertasConfirmadasFreelancerView():
     def count(request, format=None):
         try:
             freelancer = FreeLancers.objects.get(owner=request.user)
-            count = Confirmados.objects.filter(owner=freelancer.owner, oferta_id__closed=True).count()
+            count = Confirmados.objects.filter(
+                owner=freelancer.owner, oferta_id__closed=True).count()
             return Response(count)
         except Exception:
-            raise NotFound(detail="Não foi possíbel exibir o número de trampos")
+            raise NotFound(
+                detail="Não foi possíbel exibir o número de trampos")
 
 
 class HistoricoFreelancerView():
@@ -127,18 +130,21 @@ class HistoricoFreelancerView():
     def historico(request, pk, format=None):
         try:
             historico = []
-                
+
             freelancer = FreeLancers.objects.get(owner=pk)
-            confirmados = Confirmados.objects.filter(owner=freelancer.owner, oferta_id__closed=True)
+            confirmados = Confirmados.objects.filter(
+                owner=freelancer.owner, oferta_id__closed=True)
             serializer = ConfirmadosSerializer(confirmados, many=True)
-                
+
             for data in serializer.data:
                 aux = {
                     'estabelecimento': data['estabelecimento'],
+                    'data': data['oferta_data'],
                     'vaga': data['oferta_nome']
                 }
                 historico.append(aux)
 
             return Response(historico)
         except Exception:
-            raise ValidationError(detail="Não foi possível exibir o histórico.")
+            raise ValidationError(
+                detail='Não foi possível exibir o histórico.')

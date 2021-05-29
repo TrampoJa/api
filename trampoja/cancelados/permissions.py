@@ -13,7 +13,7 @@ class IsOwnerOrReadOnly():
             pass
 
         try:
-            estabelecimento = Estabelecimentos.objects.get(owner=request.user)
+            estabelecimento = Estabelecimentos.manager.get(owner=request.user)
             if isinstance(estabelecimento, Estabelecimentos):
                 if request.user == estabelecimento.owner:
                     return True
