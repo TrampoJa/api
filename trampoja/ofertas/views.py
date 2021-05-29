@@ -23,7 +23,7 @@ def get_oferta(pk):
     try:
         return Ofertas.objects.get(pk=pk)
     except Ofertas.DoesNotExist:
-        raise NotFound(detail="Trampo não encontrado.")
+        raise NotFound(detail=["Trampo não encontrado."])
 
 
 class CreateOfertaView():
@@ -76,7 +76,7 @@ class ListOfertaView():
         if ofertas is not None :
             serializer = OfertasSerializer(ofertas, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        raise NotFound(detail="Não foi possível exibir os trampos.")
+        raise NotFound(detail=["Não foi possível exibir os trampos."])
 
 
 class ProfileOfertaView():
@@ -87,7 +87,7 @@ class ProfileOfertaView():
         if ofertas is not None :
             serializer = OfertasSerializer(ofertas, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        raise NotFound(detail="Não foi possível exibir seus trampos.")
+        raise NotFound(detail=["Não foi possível exibir seus trampos."])
 
 
 class DetailOfertaView():
@@ -99,7 +99,7 @@ class DetailOfertaView():
             if oferta is not None :
                 serializer = OfertasSerializer(oferta)
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            raise NotFound(detail="Não foi possível exibir os detalhes do trampo.")
+            raise NotFound(detail=["Não foi possível exibir os detalhes do trampo."])
         raise PermissionDenied(detail=["Você não tem permissão para isso."])
 
 

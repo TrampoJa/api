@@ -40,7 +40,7 @@ class ListEstabelecimentoView():
             estabelecimento = EstabelecimentosSerializer(estabelecimentos, many=True)
             return Response(estabelecimento.data, status=status.HTTP_200_OK)
 
-        raise NotFound(detail="Não foi possível exibir os estabelecimentos.")
+        raise NotFound(detail=["Não foi possível exibir os estabelecimentos."])
 
 
 class ProfileEstabelecimentoView():
@@ -53,7 +53,7 @@ class ProfileEstabelecimentoView():
             estabelecimento = EstabelecimentosSerializer(estabelecimento)
             return Response(estabelecimento.data, status=status.HTTP_200_OK)
 
-        raise NotFound(detail="Não foi possível exibir seus dados.")
+        raise NotFound(detail=["Não foi possível exibir seus dados."])
 
 
 class DetailEstabelecimentoView():
@@ -66,7 +66,7 @@ class DetailEstabelecimentoView():
             if estabelecimento is not None :
                 estabelecimento = EstabelecimentosSerializer(estabelecimento)
                 return Response(estabelecimento.data, status=status.HTTP_200_OK)
-            raise NotFound(detail="Não foi possível exibir seus dados.")
+            raise NotFound(detail=["Não foi possível exibir seus dados."])
 
         raise PermissionDenied(detail=["Você não tem permissão para isso."])
 

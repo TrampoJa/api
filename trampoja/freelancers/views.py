@@ -22,7 +22,7 @@ def get_freelancer(pk):
     try:
         return FreeLancers.objects.get(pk=pk)
     except FreeLancers.DoesNotExist:
-        raise NotFound(detail="Freelancer não encontrado.")
+        raise NotFound(detail=["Freelancer não encontrado."])
 
 
 class CreateFreeLancerView():
@@ -52,7 +52,7 @@ class ListFreeLancerView():
         if freelancers is not None:
             serializer = FreeLancersSerializer(freelancers, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        raise NotFound(detail="Não foi possível exibir os freelancers.")
+        raise NotFound(detail=["Não foi possível exibir os freelancers."])
 
 
 class ProfileFreeLancerView():
@@ -63,7 +63,7 @@ class ProfileFreeLancerView():
         if freelancer is not None:
             serializer = FreeLancersSerializer(freelancer)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        raise NotFound(detail="Não foi possível exibir seus dados.")
+        raise NotFound(detail=["Não foi possível exibir seus dados."])
 
 
 class DetailFreeLancerView():
@@ -75,7 +75,7 @@ class DetailFreeLancerView():
             if freelancer is not None:
                 serializer = FreeLancersSerializer(freelancer)
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            raise NotFound(detail="Não foi possível exibir seus dados.")
+            raise NotFound(detail=["Não foi possível exibir seus dados."])
         raise PermissionDenied(detail=["Você não tem permissão para isso."])
 
 

@@ -86,7 +86,7 @@ class ListToFreelancerCanceladosView():
         if cancelados is not None:
             serializer = CanceladosSerializer(cancelados, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        raise NotFound(detail="Não foi possível exibir os trampos cancelados.")
+        raise NotFound(detail=["Não foi possível exibir os trampos cancelados."])
 
 
 class ListToEstabelecimentoCanceladosView():
@@ -97,4 +97,4 @@ class ListToEstabelecimentoCanceladosView():
         if cancelados is not None:
             serializer = CanceladosSerializer(cancelados, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        raise NotFound(detail="Não foi possível exibir os trampos cancelados.")
+        raise NotFound(detail=["Não foi possível exibir os trampos cancelados."])
