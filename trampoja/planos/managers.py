@@ -6,7 +6,7 @@ class PlanosManager(models.Manager):
         try:
             return self.get(pk=pk)
         except Exception:
-            raise NotFound(detail="Plano não encontrado.")
+            raise NotFound(detail=["Plano não encontrado."])
 
     def set_plano(self, estabelecimento, plano):
         estabelecimento.plano_contratado = plano

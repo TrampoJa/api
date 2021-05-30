@@ -19,7 +19,7 @@ def get_interesse(pk):
     try:
         return Interesses.objects.get(pk=pk)
     except Interesses.DoesNotExist:
-        raise NotFound(detail="Interesse não encontrado.")
+        raise NotFound(detail=["Interesse não encontrado."])
 
 
 class CreateInteresseView():
@@ -55,7 +55,7 @@ class ListToFreelancerInteresseView():
         if interesses is not None:
             serializer = InteressesSerializer(interesses, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        raise NotFound(detail="Não foi possível exibir seus interesses.")
+        raise NotFound(detail=["Não foi possível exibir seus interesses."])
 
 
 class ListToEstabelecimentoInteresseView():
@@ -66,4 +66,4 @@ class ListToEstabelecimentoInteresseView():
         if interesses is not None:
             serializer = InteressesSerializer(interesses, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        raise NotFound(detail="Não foi possível exibir seus interesses.")
+        raise NotFound(detail=["Não foi possível exibir seus interesses."])
