@@ -20,7 +20,7 @@ def get_avaliacao(pk):
     try:
         return Avaliacoes.objects.get(pk=pk)
     except Avaliacoes.DoesNotExist:
-        raise NotFound(detail="Avalição não encontrada.")
+        raise NotFound(detail=["Avalição não encontrada."])
 
 
 class CreateAvaliacaoView():
@@ -50,4 +50,4 @@ class GetSelfAvaliacaoView():
             avaliacoes = Avaliacoes.objects.filter(owner=request.user.pk).aggregate(Avg('nota'))
             return Response(avaliacoes['nota__avg'], status=status.HTTP_200_OK)
         except Avaliacoes.DoesNotExist:
-            raise NotFound(detail="Avalição não encontrada.")
+            raise NotFound(detail=["Avalição não encontrada."])

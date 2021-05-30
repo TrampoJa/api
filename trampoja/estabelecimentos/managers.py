@@ -11,13 +11,13 @@ class EstabelecimentoManager(models.Manager):
         try:
             return self.get(pk=pk)
         except Exception:
-            raise NotFound(detail="Estabelecimento não encontrado.")
+            raise NotFound(detail=["Estabelecimento não encontrado."])
 
     def get_profile(self, user):
         try:
             return self.get(owner=user)
         except Exception:
-            raise NotFound(detail="Estabelecimento não encontrado.")
+            raise NotFound(detail=["Estabelecimento não encontrado."])
 
     def create_estabelecimento(self, estabelecimento, user):
         Utils.validator(estabelecimento.validated_data)

@@ -15,7 +15,7 @@ def get_endereco(pk):
     try:
         return Enderecos.objects.get(pk=pk)
     except Enderecos.DoesNotExist:
-        raise NotFound(detail="Endereço não encontrado.")
+        raise NotFound(detail=["Endereço não encontrado."])
 
 
 class CreateEnderecoView():
@@ -39,7 +39,7 @@ class ProfileEnderecoView():
         if endereco is not None :
             serializer = EnderecosSerializer(endereco)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        raise NotFound(detail="Não foi possível exibir seu endereço.")
+        raise NotFound(detail=["Não foi possível exibir seu endereço."])
 
 
 class UpdateEnderecoView():

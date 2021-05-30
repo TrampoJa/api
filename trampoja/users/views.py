@@ -20,7 +20,7 @@ def get_user(pk):
     try:
         return User.objects.get(pk=pk)
     except User.DoesNotExist:
-        raise NotFound(detail="Usuário não encontrado.")
+        raise NotFound(detail=["Usuário não encontrado."])
 
 
 class CreateUserView():
@@ -54,7 +54,7 @@ class ProfileUserView():
         if user is not None:
             serializer = UserSerializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        raise NotFound(detail="Não foi possível exibir seus dados.")
+        raise NotFound(detail=["Não foi possível exibir seus dados."])
 
 
 class DetailUserView():
@@ -114,7 +114,7 @@ class RecoveryPasswordView():
             user.save()
             return Response({"success": "success"}, status=200)
         except Exception:
-            raise NotFound(detail="Este email não está cadastrado.")
+            raise NotFound(detail=["Este email não está cadastrado."])
 
 
 class Login():
