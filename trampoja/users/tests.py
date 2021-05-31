@@ -10,7 +10,7 @@ class TestUsers(TestCase):
         self.client = APIClient()
         self.writer = User.objects.create_user(
             'test_user',
-            'test@example.com', 
+            'test@example.com',
             'password1'
         )
         self.token = Token.objects.create(user=self.writer)
@@ -21,8 +21,8 @@ class TestUsers(TestCase):
             '123456'
         )
 
- 
-class TestUsersCreateView(TestUsers):   
+
+class TestUsersCreateView(TestUsers):
     def test_create_users_post_sucess(self):
         data = {
             'username': 'joao@gmail.com',
@@ -44,6 +44,17 @@ class TestUsersCreateView(TestUsers):
         }
         response = self.client.post("/auth/register", data)
         self.assertEqual(response.status_code, 201)
+
+    def test_create_users_post_invalid_name(self):
+        data = {
+            'username': 'joao@gmail.com.br',
+            'password': '123456',
+            'email': 'joao@gmail.com.br',
+            'first_name': 'Joa1',
+            'last_name': 'Antunes'
+        }
+        response = self.client.post("/auth/register", data)
+        self.assertEqual(response.status_code, 400)
 
     def test_create_users_post_error_password(self):
         data = {
@@ -68,26 +79,26 @@ class TestUsersCreateView(TestUsers):
         self.assertEqual(response.status_code, 400)
 
 
-class TestUsersProfileView(TestUsers):    
+class TestUsersProfileView(TestUsers):
     def test_profile_user_error(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + '')
         response = self.client.get("/auth/profile")
         self.assertEqual(response.status_code, 401)
- 
+
     def test_profile_user_sucess(self):
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)    
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         response = self.client.get("/auth/profile")
         self.assertEqual(response.status_code, 200)
 
 
 class TestUsersDetailView(TestUsers):
     def test_detail_user_error(self):
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)    
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         response = self.client.get("/auth/detail/0")
         self.assertEqual(response.status_code, 404)
- 
+
     def test_detail_user_sucess(self):
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)    
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         response = self.client.get("/auth/detail/1")
         self.assertEqual(response.status_code, 200)
 
@@ -97,7 +108,7 @@ class TestChangeEmailView(TestUsers):
         data = {
             'email': '',
         }
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)    
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         response = self.client.put("/auth/set-email", data)
         self.assertEqual(response.status_code, 400)
 
@@ -105,7 +116,7 @@ class TestChangeEmailView(TestUsers):
         data = {
             'email': 'test3@test.com',
         }
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)    
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         response = self.client.post("/auth/set-email", data)
         self.assertEqual(response.status_code, 200)
 
@@ -115,7 +126,7 @@ class TestChangePasswordView(TestUsers):
         data = {
             'password': '654321'
         }
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)    
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         response = self.client.post("/auth/set-password", data)
         self.assertEqual(response.status_code, 200)
 
@@ -123,7 +134,7 @@ class TestChangePasswordView(TestUsers):
         data = {
             'password': '65432'
         }
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)    
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         response = self.client.post("/auth/set-password", data)
         self.assertEqual(response.status_code, 400)
 
@@ -157,12 +168,12 @@ class TestLogin(TestCase):
         self.client = APIClient()
         self.writer = User.objects.create_user(
             'test_user',
-            'test@example.com', 
+            'test@example.com',
             'password1'
         )
 
     def test_login_sucess(self):
-        
+
         data = {
             'username': 'test_user',
             'password': 'password1'
@@ -171,7 +182,7 @@ class TestLogin(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_login_error(self):
-        
+
         data = {
             'username': '',
             'password': ''
@@ -180,7 +191,7 @@ class TestLogin(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_login_error_password(self):
-        
+
         data = {
             'username': self.writer.username,
             'password': ''
@@ -189,7 +200,7 @@ class TestLogin(TestCase):
         self.assertEqual(response.status_code, 400)
 
     def test_login_error_username(self):
-        
+
         data = {
             'username': '',
             'password': self.writer.password
