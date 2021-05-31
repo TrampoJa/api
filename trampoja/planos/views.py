@@ -46,4 +46,4 @@ class ListPlanosView():
             planos = PlanosSerializer(planos, many=True)
             return Response(planos.data, status=status.HTTP_200_OK)
 
-        raise NotFound(detail="Não foi possível exibir os planos.")
+        raise NotFound(detail=["Não foi possível exibir os planos."])

@@ -23,7 +23,7 @@ def get_confirmado(pk):
     try:
         return Confirmados.objects.get(pk=pk)
     except Confirmados.DoesNotExist:
-        raise NotFound(detail="Confirmado não encontrado.")
+        raise NotFound(detail=["Confirmado não encontrado."])
 
 
 class CreateConfirmadoView():    
@@ -62,7 +62,7 @@ class ListToFreelancerConfirmadoView():
         if confirmados is not None:
             serializer = ConfirmadosSerializer(confirmados, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        raise NotFound(detail="Não foi possível exibir os trampos confirmados.")
+        raise NotFound(detail=["Não foi possível exibir os trampos confirmados."])
 
 
 class ListToEstabelecimentoConfirmadoView():
@@ -73,4 +73,4 @@ class ListToEstabelecimentoConfirmadoView():
         if confirmados is not None:
             serializer = ConfirmadosSerializer(confirmados, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        raise NotFound(detail="Não foi possível exibir os trampos confirmados.")
+        raise NotFound(detail=["Não foi possível exibir os trampos confirmados."])
