@@ -1,4 +1,3 @@
-from django.http import *
 from django.views.decorators.csrf import csrf_protect
 
 from rest_framework.response import Response
@@ -23,9 +22,10 @@ class CreateEstabelecimentoView():
         estabelecimento = EstabelecimentosSerializer(data=request.data)
 
         if estabelecimento.is_valid():
-            response = Estabelecimentos.manager.create_estabelecimento(estabelecimento, user)
+            response = Estabelecimentos.manager.create_estabelecimento(
+                estabelecimento, user)
             return Response(response, status=status.HTTP_201_CREATED)
-            
+
         raise ValidationError(detail="Não foi possível finalizar seu cadastro, \
                 verifique os dados informados e tente novamente")
 
@@ -36,8 +36,9 @@ class ListEstabelecimentoView():
     def liste(request, format=None):
         estabelecimentos = Estabelecimentos.manager.all()
 
-        if estabelecimentos is not None :
-            estabelecimento = EstabelecimentosSerializer(estabelecimentos, many=True)
+        if estabelecimentos is not None:
+            estabelecimento = EstabelecimentosSerializer(
+                estabelecimentos, many=True)
             return Response(estabelecimento.data, status=status.HTTP_200_OK)
 
         raise NotFound(detail=["Não foi possível exibir os estabelecimentos."])
@@ -49,7 +50,7 @@ class ProfileEstabelecimentoView():
     def profile(request, format=None):
         estabelecimento = Estabelecimentos.manager.get_profile(request.user)
 
-        if estabelecimento is not None :
+        if estabelecimento is not None:
             estabelecimento = EstabelecimentosSerializer(estabelecimento)
             return Response(estabelecimento.data, status=status.HTTP_200_OK)
 
@@ -63,7 +64,7 @@ class DetailEstabelecimentoView():
         estabelecimento = Estabelecimentos.manager.get_estabelecimento(pk)
 
         if IsOwnerOrReadOnly.has_object_permission(request, estabelecimento):
-            if estabelecimento is not None :
+            if estabelecimento is not None:
                 estabelecimento = EstabelecimentosSerializer(estabelecimento)
                 return Response(estabelecimento.data, status=status.HTTP_200_OK)
             raise NotFound(detail=["Não foi possível exibir seus dados."])
@@ -79,9 +80,11 @@ class UpdateEstabelecimentoView():
         estabelecimento = Estabelecimentos.manager.get_estabelecimento(pk)
 
         if IsOwnerOrReadOnly.has_object_permission(request, estabelecimento):
-            estabelecimento = EstabelecimentosSerializer(estabelecimento, data=request.data)
+            estabelecimento = EstabelecimentosSerializer(
+                estabelecimento, data=request.data)
             if estabelecimento.is_valid():
-                estabelecimento = Estabelecimentos.manager.update(estabelecimento)
+                estabelecimento = Estabelecimentos.manager.update(
+                    estabelecimento)
                 return Response(estabelecimento, status=status.HTTP_200_OK)
             raise ValidationError(detail="Não foi possível atualizar seus dados, \
                     verifique os dados informados e tente novamente.")

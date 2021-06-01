@@ -1,4 +1,3 @@
-from django.http import *
 from django.views.decorators.csrf import csrf_protect
 
 from rest_framework.response import Response
@@ -20,14 +19,16 @@ class setPlanoEstabelecimento():
     @api_view(['POST'])
     @authentication_classes([TokenAuthentication])
     def set_plano(request, format=None):
-        estabelecimento = Estabelecimentos.manager.get_estabelecimento(request.data['estabelecimento']) 
+        estabelecimento = Estabelecimentos.manager.get_estabelecimento(
+            request.data['estabelecimento'])
         plano = Planos.manager.get_plano(request.data['plano'])
 
         if IsEstabelecimentoOrReadOnly.has_object_permission(request):
             # Aqui será a chamada do gateway de pagamento
-            # Se der tudo certo continua e seta o plano e o historico para o estabelecimento         
+            # Se der tudo certo continua e seta o plano e o historico para o estabelecimento
             try:
-                estabelecimento = Planos.manager.set_plano(estabelecimento, plano)
+                estabelecimento = Planos.manager.set_plano(
+                    estabelecimento, plano)
                 estabelecimento = EstabelecimentosSerializer(estabelecimento)
                 return Response(estabelecimento)
             except Exception:
@@ -36,13 +37,13 @@ class setPlanoEstabelecimento():
         raise PermissionDenied(detail=["Você não tem permissão para isso."])
 
 
-class ListPlanosView():    
+class ListPlanosView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
     def liste(request, format=None):
         planos = Planos.manager.all()
 
-        if planos is not None :
+        if planos is not None:
             planos = PlanosSerializer(planos, many=True)
             return Response(planos.data, status=status.HTTP_200_OK)
 

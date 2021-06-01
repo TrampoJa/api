@@ -12,16 +12,24 @@ class CanceladosSerializer(serializers.ModelSerializer):
     oferta_hora_final = serializers.ReadOnlyField(source='oferta.time_final')
     oferta_data = serializers.ReadOnlyField(source='oferta.date_inicial')
     freelancer_nome = serializers.ReadOnlyField(source='owner.freelancer.nome')
-    freelancer_sobrenome = serializers.ReadOnlyField(source='owner.freelancer.sobrenome')
-    freelancer_telefone = serializers.ReadOnlyField(source='owner.freelancer.telefone')
+    freelancer_sobrenome = serializers.ReadOnlyField(
+        source='owner.freelancer.sobrenome')
+    freelancer_telefone = serializers.ReadOnlyField(
+        source='owner.freelancer.telefone')
     freelancer_bio = serializers.ReadOnlyField(source='owner.freelancer.bio')
-    freelancer_owner = serializers.ReadOnlyField(source='owner.freelancer.owner.id')
-    freelancer_email = serializers.ReadOnlyField(source='owner.freelancer.owner.email')
-    estabelecimento = serializers.ReadOnlyField(source='oferta.owner.estabelecimento.nome')
-    estabelecimento_id = serializers.ReadOnlyField(source='oferta.owner.estabelecimento.id')
-    estabelecimento_telefone = serializers.ReadOnlyField(source='oferta.owner.estabelecimento.telefone')
+    freelancer_owner = serializers.ReadOnlyField(
+        source='owner.freelancer.owner.id')
+    freelancer_email = serializers.ReadOnlyField(
+        source='owner.freelancer.owner.email')
+    estabelecimento = serializers.ReadOnlyField(
+        source='oferta.owner.estabelecimento.nome')
+    estabelecimento_id = serializers.ReadOnlyField(
+        source='oferta.owner.estabelecimento.id')
+    estabelecimento_telefone = serializers.ReadOnlyField(
+        source='oferta.owner.estabelecimento.telefone')
     estabelecimento_owner = serializers.ReadOnlyField(source='oferta.owner.id')
-    estabelecimento_email = serializers.ReadOnlyField(source='oferta.owner.email')
+    estabelecimento_email = serializers.ReadOnlyField(
+        source='oferta.owner.email')
 
     class Meta:
         model = Cancelados

@@ -1,8 +1,6 @@
-from django.http import *
 from django.views.decorators.csrf import csrf_protect
 
 from rest_framework.response import Response
-from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import ValidationError, PermissionDenied
@@ -21,7 +19,8 @@ class UploadImageView():
             try:
                 freelancer.foto = request.data['foto']
                 freelancer.save()
-                return Response({"message":"sucess"}, status=200)
+                return Response({"message": "sucess"}, status=200)
             except Exception:
-                raise ValidationError(detail="Não foi possível fazer o upload da sua foto.")
+                raise ValidationError(
+                    detail="Não foi possível fazer o upload da sua foto.")
         raise PermissionDenied(detail=["Você não tem permissão para isso."])

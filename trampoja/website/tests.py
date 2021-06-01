@@ -1,7 +1,6 @@
 from django.test import TestCase
-from users.views import User
 from django.test.client import Client
-from django.http import *
+
 
 class TestIndex(TestCase):
 

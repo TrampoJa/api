@@ -17,24 +17,33 @@ class InteressesSerializer(serializers.ModelSerializer):
     oferta_status = serializers.ReadOnlyField(source='oferta.status')
     oferta_canceled = serializers.ReadOnlyField(source='oferta.canceled')
     freelancer_nome = serializers.ReadOnlyField(source='owner.freelancer.nome')
-    freelancer_owner = serializers.ReadOnlyField(source='owner.freelancer.owner.id')
-    freelancer_sobrenome = serializers.ReadOnlyField(source='owner.freelancer.sobrenome')
-    freelancer_telefone = serializers.ReadOnlyField(source='owner.freelancer.telefone')
+    freelancer_owner = serializers.ReadOnlyField(
+        source='owner.freelancer.owner.id')
+    freelancer_sobrenome = serializers.ReadOnlyField(
+        source='owner.freelancer.sobrenome')
+    freelancer_telefone = serializers.ReadOnlyField(
+        source='owner.freelancer.telefone')
     freelancer_bio = serializers.ReadOnlyField(source='owner.freelancer.bio')
-    estabelecimento = serializers.ReadOnlyField(source='oferta.owner.estabelecimento.nome')
-    estabelecimento_telefone = serializers.ReadOnlyField(source='oferta.owner.estabelecimento.telefone')
-    estabelecimento_id = serializers.ReadOnlyField(source='oferta.owner.estabelecimento.id')
+    estabelecimento = serializers.ReadOnlyField(
+        source='oferta.owner.estabelecimento.nome')
+    estabelecimento_telefone = serializers.ReadOnlyField(
+        source='oferta.owner.estabelecimento.telefone')
+    estabelecimento_id = serializers.ReadOnlyField(
+        source='oferta.owner.estabelecimento.id')
     estabelecimento_owner = serializers.ReadOnlyField(source='oferta.owner.id')
-    estabelecimento_email = serializers.ReadOnlyField(source='oferta.owner.email')
+    estabelecimento_email = serializers.ReadOnlyField(
+        source='oferta.owner.email')
     avaliacao = serializers.SerializerMethodField()
     trampos = serializers.SerializerMethodField()
 
     def get_avaliacao(self, interesse):
-        avaliacao = Avaliacoes.objects.filter(owner_id=interesse.owner.id).aggregate(Avg('nota'))
+        avaliacao = Avaliacoes.objects.filter(
+            owner_id=interesse.owner.id).aggregate(Avg('nota'))
         return avaliacao['nota__avg']
-    
+
     def get_trampos(self, interesse):
-        trampos = Confirmados.objects.filter(owner=interesse.owner, oferta_id__closed=True).count()
+        trampos = Confirmados.objects.filter(
+            owner=interesse.owner, oferta_id__closed=True).count()
         return trampos
 
     class Meta:

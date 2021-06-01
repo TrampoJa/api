@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from users.models import User
 from estabelecimentos.models import Estabelecimentos
 
 
@@ -15,7 +14,7 @@ class EstabelecimentosSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'nome',
-            'cpf_cnpj',
+            'cnpj',
             'razao_social',
             'tipo',
             'telefone',

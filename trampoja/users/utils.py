@@ -32,7 +32,8 @@ class Validator:
 class Formater:
 
     def name(self, data):
-        fullName = data['first_name'] + ' ' + data['last_name']
+        fullName = data['first_name'].capitalize() + ' ' + \
+            data['last_name'].capitalize()
         regex = r'\s+'
         fullName = sub(regex, ' ', fullName)
         fullName = fullName.strip()

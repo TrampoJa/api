@@ -1,4 +1,3 @@
-import os
 import io
 
 from PIL import Image
@@ -8,7 +7,6 @@ from users.views import User
 from estabelecimentos.models import Estabelecimentos
 from rest_framework.test import APIClient
 from rest_framework.authtoken.models import Token
-from django.http import *
 
 
 class TestEstabelecimentos(TestCase):
@@ -16,32 +14,32 @@ class TestEstabelecimentos(TestCase):
         self.client = APIClient()
         self.writer = User.objects.create_user(
             'test_user',
-            'test@example.com', 
+            'test@example.com',
             'password1'
         )
         self.token = Token.objects.create(user=self.writer)
 
         self.writer2 = User.objects.create_user(
             'test_user2',
-            'test2@example.com', 
+            'test2@example.com',
             'password1'
         )
         self.token2 = Token.objects.create(user=self.writer2)
 
         self.writer3 = User.objects.create_user(
             'test_user3',
-            'test3@example.com', 
+            'test3@example.com',
             'password1'
         )
         self.token3 = Token.objects.create(user=self.writer3)
 
         self.estabelecimento = Estabelecimentos(
-            nome = 'Teste',
-            cpf_cnpj = '09992622970',
-            razao_social = 'TESTE',
-            tipo = 'bodega',
-            telefone = '049999950411',
-            owner = self.writer3
+            nome='Teste',
+            cnpj='09992622970',
+            razao_social='TESTE',
+            tipo='bodega',
+            telefone='049999950411',
+            owner=self.writer3
         )
         self.estabelecimento.save()
 
@@ -58,33 +56,35 @@ class TestUploadLogo(TestEstabelecimentos):
     def test_upload_photo_sucess(self):
         photo_file = self.generate_photo_file()
         data = {
-            'logo':photo_file
+            'logo': photo_file
         }
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token3.key)
-        response = self.client.post("/estabelecimento/upload/1", data, format='multipart')
+        response = self.client.post(
+            "/estabelecimento/upload/1", data, format='multipart')
         self.assertEqual(response.status_code, 200)
-    
+
     def test_upload_photo_error_authentication(self):
         photo_file = self.generate_photo_file()
         data = {
-            'logo':photo_file
+            'logo': photo_file
         }
-        response = self.client.post("/estabelecimento/upload/1", data, format='multipart')
+        response = self.client.post(
+            "/estabelecimento/upload/1", data, format='multipart')
         self.assertEqual(response.status_code, 403)
-    
+
     def test_upload_photo_error(self):
-        photo_file = self.generate_photo_file()
         data = {}
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token3.key)
-        response = self.client.post("/estabelecimento/upload/1", data, format='multipart')
+        response = self.client.post(
+            "/estabelecimento/upload/1", data, format='multipart')
         self.assertEqual(response.status_code, 400)
 
 
-class TestEstabelecimentosCreateView(TestEstabelecimentos):   
+class TestEstabelecimentosCreateView(TestEstabelecimentos):
     def test_create_estabelecimento_post_sucess(self):
         data = {
             'nome': 'Teste',
-            'cpf_cnpj': '09992622972',
+            'cnpj': '09992622972',
             'razao_social': 'TESTE',
             'tipo': 'bodega',
             'telefone': '049999950411'
@@ -96,7 +96,7 @@ class TestEstabelecimentosCreateView(TestEstabelecimentos):
     def test_create_estabelecimento_post_error_cpfcnpj(self):
         data = {
             'nome': 'Teste',
-            'cpf_cnpj': '09/*fail*/670',
+            'cnpj': '09/*fail*/670',
             'razao_social': 'TESTE',
             'tipo': 'bodega',
             'telefone': '049999950411'
@@ -108,7 +108,7 @@ class TestEstabelecimentosCreateView(TestEstabelecimentos):
     def test_create_estabelecimento_post_error_telefone(self):
         data = {
             'nome': 'Teste',
-            'cpf_cnpj': '09992622971',
+            'cnpj': '09992622971',
             'razao_social': 'TESTE',
             'tipo': 'bodega',
             'telefone': '049/*fail*/411'
@@ -136,19 +136,19 @@ class TestEstabelecimentosProfileView(TestEstabelecimentos):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + '')
         response = self.client.get("/estabelecimento/profile")
         self.assertEqual(response.status_code, 401)
- 
+
     def test_profile_estabelecimento_sucess(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token3.key)
         response = self.client.get("/estabelecimento/profile")
         self.assertEqual(response.status_code, 200)
 
 
-class TestEstabelecimentosDetailView(TestEstabelecimentos):    
+class TestEstabelecimentosDetailView(TestEstabelecimentos):
     def test_detail_estabelecimento_error(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         response = self.client.get("/estabelecimento/detail/0")
         self.assertEqual(response.status_code, 404)
- 
+
     def test_detail_estabelecimento_sucess(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         response = self.client.get("/estabelecimento/detail/1")
@@ -170,7 +170,7 @@ class TestEstabelecimentosUpdateView(TestEstabelecimentos):
     def test_update_estabelecimento_post_sucess(self):
         data = {
             'nome': 'Teste',
-            'cpf_cnpj': '09992622970',
+            'cnpj': '09992622970',
             'razao_social': 'TESTE',
             'tipo': 'bodega',
             'telefone': '049999950411'
@@ -182,7 +182,7 @@ class TestEstabelecimentosUpdateView(TestEstabelecimentos):
     def test_update_estabelecimento_post_permissions(self):
         data = {
             'nome': 'Teste',
-            'cpf_cnpj': '09992622970',
+            'cnpj': '09992622970',
             'razao_social': 'TESTE',
             'tipo': 'bodega',
             'telefone': '049999950411'
@@ -190,7 +190,6 @@ class TestEstabelecimentosUpdateView(TestEstabelecimentos):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token2.key)
         response = self.client.post("/estabelecimento/update/1", data)
         self.assertEqual(response.status_code, 403)
-
 
 
 class TestEstabelecimentosDeleteView(TestEstabelecimentos):

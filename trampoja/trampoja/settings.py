@@ -10,7 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
-import os, sys
+import os
+import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -103,15 +104,15 @@ if 'test' in sys.argv:
     }
 else:
     DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'trampoja',
-        'USER': 'tj_user',
-        'PASSWORD': 'Gtr400@@',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'trampoja',
+            'USER': 'tj_user',
+            'PASSWORD': 'Gtr400@@',
+            'HOST': 'localhost',
+            'PORT': '5432',
+        }
     }
-}
 
 
 # Password validation
@@ -167,7 +168,7 @@ USE_TZ = True
 
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
-MEDIA_URL =  '/media/'
+MEDIA_URL = '/media/'
 
 
 # Static files (CSS, JavaScript, Images)
@@ -182,7 +183,7 @@ STATICFILES_DIRS = (
 LOGIN_URL = 'loginUser'
 
 
-#CELERY
+# CELERY
 
 CELERY_TIMEZONE = "America/Sao_Paulo"
 
