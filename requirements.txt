@@ -11,10 +11,3 @@ celery
 redis
 psycopg2-binary
 psycopg2
-
-# pkill gunicorn
-# gunicorn -b 127.0.0.1:8000 trampoja.wsgi
-# celery -A trampoja worker -l INFO  
-# src/redis-server
-# src/redis-cli
-# /usr/local/lib/python3.8/site-packages/kombu/transport/redis.py
