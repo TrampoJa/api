@@ -1,6 +1,7 @@
 from estabelecimentos.models import Estabelecimentos
 from freelancers.models import FreeLancers
 
+
 class IsOwnerOrReadOnly():
 
     def has_object_permission(request):
@@ -19,5 +20,5 @@ class IsOwnerOrReadOnly():
                     return True
         except Exception:
             pass
-        
+
         return False

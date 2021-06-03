@@ -8,7 +8,7 @@ class TestEmailMessages(TestCase):
         self.email = 'teste@teste.com'
         self.oferta = 'Garçom'
 
-    
+
 class TestWelcomeMessage(TestEmailMessages):
     def test_send_welcome_message_succes(self):
         response = SendEmailMessage(nome=self.nome, email=self.email)\

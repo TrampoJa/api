@@ -1,5 +1,4 @@
 from django.db.models import Avg
-from django.http import *
 from django.views.decorators.csrf import csrf_protect
 
 from rest_framework.response import Response
@@ -32,14 +31,16 @@ class CreateAvaliacaoView():
         oferta = get_oferta(request.data['oferta'])
         if Avaliacoes.objects.filter(owner=owner, oferta=oferta):
             raise ValidationError(detail="Ops, você já avaliou este trampo!")
-        try:   
-            a = Avaliacoes.objects.create(owner=owner, oferta=oferta, nota=request.data['nota'])
+        try:
+            a = Avaliacoes.objects.create(
+                owner=owner, oferta=oferta, nota=request.data['nota'])
             oferta.closed = True
             oferta.save()
             serializer = AvaliacoesSerializer(a)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception:
-            raise ValidationError(detail="Ops, não foi possível avaliar este trampos!")
+            raise ValidationError(
+                detail="Ops, não foi possível avaliar este trampos!")
 
 
 class GetSelfAvaliacaoView():
@@ -47,7 +48,8 @@ class GetSelfAvaliacaoView():
     @authentication_classes([TokenAuthentication])
     def getSelf(request, format=None):
         try:
-            avaliacoes = Avaliacoes.objects.filter(owner=request.user.pk).aggregate(Avg('nota'))
+            avaliacoes = Avaliacoes.objects.filter(
+                owner=request.user.pk).aggregate(Avg('nota'))
             return Response(avaliacoes['nota__avg'], status=status.HTTP_200_OK)
         except Avaliacoes.DoesNotExist:
             raise NotFound(detail=["Avalição não encontrada."])

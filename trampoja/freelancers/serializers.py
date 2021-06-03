@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from users.models import User
 from freelancers.models import FreeLancers
 
 
@@ -14,7 +13,7 @@ class FreeLancersSerializer(serializers.ModelSerializer):
         model = FreeLancers
         fields = [
             'id',
-            'nome' ,
+            'nome',
             'sobrenome',
             'telefone',
             'nascimento',

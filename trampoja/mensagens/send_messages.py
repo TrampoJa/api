@@ -74,7 +74,7 @@ class SendEmailMessage(BaseEmailMessage):
             send_mail(
                 self.titulo,
                 "{} acabou de demonstrar interesse na sua vaga para {}. Confira em https://app.trampoja.com/interesses"
-                    .format(self.nome, self.oferta),
+                .format(self.nome, self.oferta),
                 self.from_email,
                 [self.email],
                 fail_silently=False,
@@ -90,7 +90,7 @@ class SendEmailMessage(BaseEmailMessage):
             send_mail(
                 self.titulo,
                 "Salve, {} acabou de confirmar o trampo para a vaga de {}. Confira em https://app.trampoja.com/confirmados"
-                    .format(self.nome, self.oferta),
+                .format(self.nome, self.oferta),
                 self.from_email,
                 [self.email],
                 fail_silently=False,
@@ -99,14 +99,14 @@ class SendEmailMessage(BaseEmailMessage):
         except Exception:
             return False
 
-    def sendCanceladosMessage(self):   
+    def sendCanceladosMessage(self):
         if not self.email or not self.nome:
             return False
         try:
             send_mail(
                 self.titulo,
                 "{} acabou de cancelar o trampo para a vaga de {}. Confira em https://app.trampoja.com/confirmados"
-                    .format(self.nome, self.oferta),
+                .format(self.nome, self.oferta),
                 self.from_email,
                 [self.email],
                 fail_silently=False,
@@ -117,14 +117,15 @@ class SendEmailMessage(BaseEmailMessage):
 
 
 class SendWhatsAppMessage(BaseWhatsAppMessage):
-    def sendCanceladosMessage(self):   
+    def sendCanceladosMessage(self):
         payload = {
             'message': "{} acabou de cancelar o trampo para a vaga de {}. Confira em https://trampoja.com/confirmados"
-                .format(self.nome, self.oferta),
+            .format(self.nome, self.oferta),
             'number': self.number
         }
         try:
-            response = requests.post(self.url, data=json.dumps(payload), headers=self.headers)
+            response = requests.post(
+                self.url, data=json.dumps(payload), headers=self.headers)
             return Response(response)
         except Exception:
             return
@@ -132,11 +133,12 @@ class SendWhatsAppMessage(BaseWhatsAppMessage):
     def sendInteressesMessage(self):
         payload = {
             'message': "{} acabou de demonstrar interesse na sua vaga para {}. Confira em https://trampoja.com/interesses"
-                .format(self.nome, self.oferta),
+            .format(self.nome, self.oferta),
             'number': self.number
         }
         try:
-            response = requests.post(self.url, data=json.dumps(payload), headers=self.headers)
+            response = requests.post(
+                self.url, data=json.dumps(payload), headers=self.headers)
             return Response(response)
         except Exception:
             return
@@ -144,11 +146,12 @@ class SendWhatsAppMessage(BaseWhatsAppMessage):
     def sendConfirmadosMessage(self):
         payload = {
             'message': "Salve, {} acabou de confirmar o trampo para a vaga de {}. Confira em https://trampoja.com/confirmados"
-                .format(self.nome, self.oferta),
+            .format(self.nome, self.oferta),
             'number': self.number
         }
         try:
-            response = requests.post(self.url, data=json.dumps(payload), headers=self.headers)
+            response = requests.post(
+                self.url, data=json.dumps(payload), headers=self.headers)
             return Response(response)
         except Exception:
             return

@@ -1,6 +1,5 @@
 import datetime
 
-from django.http import *
 from django.views.decorators.csrf import csrf_protect
 
 from rest_framework.response import Response
@@ -26,7 +25,7 @@ def get_confirmado(pk):
         raise NotFound(detail=["Confirmado não encontrado."])
 
 
-class CreateConfirmadoView():    
+class CreateConfirmadoView():
     @csrf_protect
     @api_view(['POST'])
     @authentication_classes([TokenAuthentication])
@@ -34,12 +33,14 @@ class CreateConfirmadoView():
         if IsEstabelecimentoOrReadOnly.has_object_permission(request):
             oferta = get_oferta(request.data['oferta'])
             freelancer = get_freelancer(request.data['freelancer'])
-            if oferta.status == False:
+            if oferta.status is False:
                 raise ValidationError(detail="Este trampo já está confirmado.")
             if oferta.date_inicial < datetime.date.today():
-                raise ValidationError(detail="Este trampo já aconteceu ou passou da data.")
+                raise ValidationError(
+                    detail="Este trampo já aconteceu ou passou da data.")
             try:
-                c = Confirmados.objects.create(oferta=oferta, owner=freelancer.owner)
+                c = Confirmados.objects.create(
+                    oferta=oferta, owner=freelancer.owner)
                 oferta.status = False
                 oferta.save()
                 serializer = ConfirmadosSerializer(c)
@@ -50,7 +51,8 @@ class CreateConfirmadoView():
                 )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             except Exception:
-                raise ValidationError(detail="Não foi possível confirmar este trampo.")
+                raise ValidationError(
+                    detail="Não foi possível confirmar este trampo.")
         raise PermissionDenied(detail=["Você não tem permissão para isso."])
 
 
@@ -62,15 +64,18 @@ class ListToFreelancerConfirmadoView():
         if confirmados is not None:
             serializer = ConfirmadosSerializer(confirmados, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        raise NotFound(detail=["Não foi possível exibir os trampos confirmados."])
+        raise NotFound(
+            detail=["Não foi possível exibir os trampos confirmados."])
 
 
 class ListToEstabelecimentoConfirmadoView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
     def listToEstabelecimento(request, format=None):
-        confirmados = Confirmados.objects.filter(oferta__owner_id=request.user.pk)
+        confirmados = Confirmados.objects.filter(
+            oferta__owner_id=request.user.pk)
         if confirmados is not None:
             serializer = ConfirmadosSerializer(confirmados, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        raise NotFound(detail=["Não foi possível exibir os trampos confirmados."])
+        raise NotFound(
+            detail=["Não foi possível exibir os trampos confirmados."])

@@ -1,14 +1,11 @@
 import datetime
 
 from django.test import TestCase
-from django.http import *
-from django.utils import timezone
 
 from rest_framework.test import APIClient
 from rest_framework.authtoken.models import Token
 
 from ofertas.models import Ofertas
-from ofertas.serializers import OfertasSerializer
 
 from django.contrib.auth.models import User
 
@@ -20,54 +17,54 @@ class TestOfertas(TestCase):
         self.client = APIClient()
         self.writer = User.objects.create_user(
             'test_user',
-            'test@example.com', 
+            'test@example.com',
             'password1'
         )
         self.token = Token.objects.create(user=self.writer)
 
         self.writer2 = User.objects.create_user(
             'test_user2',
-            'test2@example.com', 
+            'test2@example.com',
             'password1'
         )
         self.token2 = Token.objects.create(user=self.writer2)
 
         self.oferta = Ofertas(
-            nome = 'teste',
-            valor = 80,
-            owner = self.writer
+            nome='teste',
+            valor=80,
+            owner=self.writer
         )
         self.oferta.save()
         self.date = datetime.date.today()
 
         self.oferta2 = Ofertas(
-            nome = 'teste',
-            valor = 80,
-            owner = self.writer,
-            edit = False
+            nome='teste',
+            valor=80,
+            owner=self.writer,
+            edit=False
         )
         self.oferta2.save()
         self.date = datetime.date.today()
 
         self.estabelecimento = Estabelecimentos(
-            nome = 'Teste',
-            cpf_cnpj = '09992622970',
-            razao_social = 'TESTE',
-            tipo = 'bodega',
-            telefone = '049999950411',
-            ofertas_para_publicar = 1,
-            owner = self.writer
+            nome='Teste',
+            cnpj='09992622970',
+            razao_social='TESTE',
+            tipo='bodega',
+            telefone='049999950411',
+            ofertas_para_publicar=1,
+            owner=self.writer
         )
         self.estabelecimento.save()
 
         self.estabelecimento2 = Estabelecimentos(
-            nome = 'Teste',
-            cpf_cnpj = '09992622971',
-            razao_social = 'TESTE',
-            tipo = 'bodega',
-            telefone = '049999950411',
-            ofertas_para_publicar = 0,
-            owner = self.writer2
+            nome='Teste',
+            cnpj='09992622971',
+            razao_social='TESTE',
+            tipo='bodega',
+            telefone='049999950411',
+            ofertas_para_publicar=0,
+            owner=self.writer2
         )
         self.estabelecimento2.save()
 
@@ -140,7 +137,7 @@ class TestOfertasCreateView(TestOfertas):
 
     def test_create_ofertas_post_error(self):
         data = {
-            'nome': '' ,
+            'nome': '',
             'valor': '',
             'time': '',
             'date_inicial': '',
@@ -184,7 +181,7 @@ class TestOfertasDetailView(TestOfertas):
         self.assertEqual(response.status_code, 200)
 
     def test_detail_ofertas_permission(self):
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token2.key)    
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token2.key)
         response = self.client.get("/ofertas/detail/1")
         self.assertEqual(response.status_code, 200)
 
@@ -192,7 +189,7 @@ class TestOfertasDetailView(TestOfertas):
 class TestOfertasUpdateView(TestOfertas):
     def test_update_ofertas_post_error(self):
         data = {
-            'nome': '' ,
+            'nome': '',
             'valor': '',
             'time': '',
             'date_inicial': '',
@@ -214,7 +211,7 @@ class TestOfertasUpdateView(TestOfertas):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         response = self.client.post("/ofertas/update/1", data)
         self.assertEqual(response.status_code, 200)
-    
+
     def test_update_ofertas_edit_error(self):
         data = {
             'nome': 'Garcom',
@@ -235,7 +232,7 @@ class TestOfertasUpdateView(TestOfertas):
             'date_inicial': self.date,
             'obs': 'Chegar 10 minutos antes do horário',
         }
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token2.key)    
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token2.key)
         response = self.client.post("/ofertas/update/1", data)
         self.assertEqual(response.status_code, 403)
 
@@ -250,8 +247,8 @@ class TestOfertasDeleteView(TestOfertas):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         response = self.client.delete("/ofertas/delete/1")
         self.assertEqual(response.status_code, 200)
-    
+
     def test_delete_ofertas_permission(self):
-        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token2.key)    
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token2.key)
         response = self.client.delete("/ofertas/delete/1")
         self.assertEqual(response.status_code, 403)
