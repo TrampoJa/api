@@ -5,12 +5,13 @@ from rest_framework.authtoken.models import Token
 
 from django.contrib.auth.models import User
 
+
 class TestPlanos(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.writer = User.objects.create_user(
             'test_user',
-            'test@example.com', 
+            'test@example.com',
             'password1'
         )
         self.token = Token.objects.create(user=self.writer)

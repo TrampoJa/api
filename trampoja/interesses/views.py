@@ -1,4 +1,3 @@
-from django.http import *
 from django.views.decorators.csrf import csrf_protect
 
 from rest_framework.response import Response
@@ -30,20 +29,24 @@ class CreateInteresseView():
         if IsFreelancerOrReadOnly.has_object_permission(request):
             oferta = get_oferta(request.data['id'])
             if Interesses.objects.filter(oferta=oferta, owner=request.user):
-                raise ValidationError(detail="Você já demonstrou interesse nesse trampo.")
+                raise ValidationError(
+                    detail="Você já demonstrou interesse nesse trampo.")
             try:
-                i = Interesses.objects.create(oferta=oferta, owner=request.user)
+                i = Interesses.objects.create(
+                    oferta=oferta, owner=request.user)
                 oferta.edit = False
                 oferta.save()
                 serializer = InteressesSerializer(i)
                 task_send_interesse_message.delay(
                     serializer.data['estabelecimento_email'],
-                    serializer.data['freelancer_nome'] + ' ' + serializer.data['freelancer_sobrenome'],
+                    serializer.data['freelancer_nome'] + ' ' +
+                    serializer.data['freelancer_sobrenome'],
                     serializer.data['oferta_nome']
                 )
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             except Exception:
-                raise ValidationError(detail="Não foi possível demonstrar interesse neste trampo.")
+                raise ValidationError(
+                    detail="Não foi possível demonstrar interesse neste trampo.")
         raise PermissionDenied(detail=["Você não tem permissão para isso."])
 
 
@@ -62,7 +65,8 @@ class ListToEstabelecimentoInteresseView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
     def listToEstabelecimento(request, format=None):
-        interesses = Interesses.objects.filter(oferta__owner_id=request.user.pk)
+        interesses = Interesses.objects.filter(
+            oferta__owner_id=request.user.pk)
         if interesses is not None:
             serializer = InteressesSerializer(interesses, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)

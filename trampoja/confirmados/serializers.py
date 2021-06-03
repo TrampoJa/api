@@ -15,23 +15,31 @@ class ConfirmadosSerializer(serializers.ModelSerializer):
     oferta_data = serializers.ReadOnlyField(source='oferta.date_inicial')
     oferta_closed = serializers.ReadOnlyField(source='oferta.closed')
     freelancer_nome = serializers.ReadOnlyField(source='owner.freelancer.nome')
-    freelancer_sobrenome = serializers.ReadOnlyField(source='owner.freelancer.sobrenome')
-    freelancer_telefone = serializers.ReadOnlyField(source='owner.freelancer.telefone')
+    freelancer_sobrenome = serializers.ReadOnlyField(
+        source='owner.freelancer.sobrenome')
+    freelancer_telefone = serializers.ReadOnlyField(
+        source='owner.freelancer.telefone')
     freelancer_bio = serializers.ReadOnlyField(source='owner.freelancer.bio')
-    freelancer_owner = serializers.ReadOnlyField(source='owner.freelancer.owner.id')
-    freelancer_email = serializers.ReadOnlyField(source='owner.freelancer.owner.email')
-    estabelecimento = serializers.ReadOnlyField(source='oferta.owner.estabelecimento.nome')
-    estabelecimento_id = serializers.ReadOnlyField(source='oferta.owner.estabelecimento.id')
+    freelancer_owner = serializers.ReadOnlyField(
+        source='owner.freelancer.owner.id')
+    freelancer_email = serializers.ReadOnlyField(
+        source='owner.freelancer.owner.email')
+    estabelecimento = serializers.ReadOnlyField(
+        source='oferta.owner.estabelecimento.nome')
+    estabelecimento_id = serializers.ReadOnlyField(
+        source='oferta.owner.estabelecimento.id')
     estabelecimento_owner = serializers.ReadOnlyField(source='oferta.owner.id')
     avaliacao = serializers.SerializerMethodField()
     trampos = serializers.SerializerMethodField()
 
     def get_avaliacao(self, confirmado):
-        avaliacao = Avaliacoes.objects.filter(owner_id=confirmado.owner.id).aggregate(Avg('nota'))
+        avaliacao = Avaliacoes.objects.filter(
+            owner_id=confirmado.owner.id).aggregate(Avg('nota'))
         return avaliacao['nota__avg']
 
     def get_trampos(self, confirmado):
-        trampos = Confirmados.objects.filter(owner=confirmado.owner, oferta_id__closed=True).count()
+        trampos = Confirmados.objects.filter(
+            owner=confirmado.owner, oferta_id__closed=True).count()
         return trampos
 
     class Meta:

@@ -1,5 +1,6 @@
 from rest_framework import permissions
 
+
 class IsOwnerOrReadOnly():
 
     def has_object_permission(request, freelancer):

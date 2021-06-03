@@ -12,7 +12,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import ValidationError, NotFound, NotAuthenticated
 
 from .serializers import UserSerializer
-from .utils import Validator
+from .utils import Validator, Formater
 from .tasks import task_send_welcome_message, task_send_recovery_message
 
 
@@ -34,8 +34,7 @@ class CreateUserView():
                 request.data['email'],
                 request.data['password'],
             )
-            user.first_name = request.data['first_name'] + \
-                ' ' + request.data['last_name']
+            user.first_name = Formater().name(request.data)
             user.save()
             Token.objects.create(user=user)
             serializer = UserSerializer(user)

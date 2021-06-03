@@ -1,6 +1,7 @@
 from django.db import models
 from rest_framework.exceptions import NotFound
 
+
 class PlanosManager(models.Manager):
     def get_plano(self, pk):
         try:

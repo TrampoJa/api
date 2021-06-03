@@ -170,7 +170,7 @@ USE_TZ = True
 
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
-MEDIA_URL =  '/media/'
+MEDIA_URL = '/media/'
 
 
 # Static files (CSS, JavaScript, Images)
@@ -185,7 +185,7 @@ STATICFILES_DIRS = (
 LOGIN_URL = 'loginUser'
 
 
-#CELERY
+# CELERY
 
 CELERY_TIMEZONE = "America/Sao_Paulo"
 

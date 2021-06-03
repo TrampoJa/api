@@ -1,4 +1,3 @@
-from django.http import *
 from django.views.decorators.csrf import csrf_protect
 
 from rest_framework.response import Response
@@ -36,7 +35,7 @@ class ProfileEnderecoView():
     @authentication_classes([TokenAuthentication])
     def profile(request, format=None):
         endereco = Enderecos.objects.get(owner_id=request.user.pk)
-        if endereco is not None :
+        if endereco is not None:
             serializer = EnderecosSerializer(endereco)
             return Response(serializer.data, status=status.HTTP_200_OK)
         raise NotFound(detail=["Não foi possível exibir seu endereço."])

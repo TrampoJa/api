@@ -8,15 +8,15 @@ class Historico(models.Model):
     estabelecimento = models.ForeignKey(
         Estabelecimentos,
         on_delete=models.CASCADE,
-        null = False,
-        blank = False
+        null=False,
+        blank=False
     )
 
     plano = models.ForeignKey(
         Planos,
         on_delete=models.CASCADE,
-        null = False,
-        blank = False
+        null=False,
+        blank=False
     )
 
     create = models.DateTimeField(auto_now_add=True)
