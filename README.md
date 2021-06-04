@@ -73,13 +73,13 @@ $ GRANT ALL PRIVILEGES ON DATABASE trampoja TO tj_user;
 $ service redis-server start
 
 #Iniciando celery
-$ cd ~/www/api.trampoja.com
+$ cd ~/.www/api.trampoja.com
 $ virtualenv env
 $ cd trampoja
 $ celery -A tampoja worker -l INFO
 
 #Iniciando django
-$ cd ~/www/api.trampoja.com
+$ cd ~/.www/api.trampoja.com
 $ virtualenv env #Caso ainda não tenha iniciado
 $ cd trampoja
 $ python3.8 manage.py runserver
@@ -88,7 +88,7 @@ $ python3.8 manage.py runserver
 ## Tests
 
 ```bash
-$ cd ~/www/api.trampoja.com
+$ cd ~/.www/api.trampoja.com
 $ virtualenv env
 $ cd trampoja
 $ python3.8 manage.py test
