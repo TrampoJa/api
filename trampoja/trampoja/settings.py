@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'cancelados',
     'mensagens',
     'planos',
-    'planos_historico'
+    'planos_historico',
+    'utils'
 ]
 
 MIDDLEWARE = [
