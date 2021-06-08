@@ -84,10 +84,10 @@ class TestEstabelecimentosCreateView(TestEstabelecimentos):
     def test_create_estabelecimento_post_sucess(self):
         data = {
             'nome': 'Teste',
-            'cnpj': '09992622972',
+            'cnpj': '09992622972098',
             'razao_social': 'TESTE',
             'tipo': 'bodega',
-            'telefone': '049999950411'
+            'telefone': '49999950411'
         }
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         response = self.client.post("/estabelecimento/create", data)
@@ -170,10 +170,10 @@ class TestEstabelecimentosUpdateView(TestEstabelecimentos):
     def test_update_estabelecimento_post_sucess(self):
         data = {
             'nome': 'Teste',
-            'cnpj': '09992622970',
+            'cnpj': '09992622970098',
             'razao_social': 'TESTE',
             'tipo': 'bodega',
-            'telefone': '049999950411'
+            'telefone': '49999950411'
         }
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token3.key)
         response = self.client.post("/estabelecimento/update/1", data)

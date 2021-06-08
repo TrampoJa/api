@@ -9,7 +9,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import ValidationError, NotFound, PermissionDenied
 
 from .serializers import OfertasSerializer
-from .utils import Utils
+from utils.validator import Validator
 from .models import Ofertas
 from .permissions import IsOwnerOrReadOnly
 from .tasks import task_send_nova_oferta_message
@@ -41,7 +41,7 @@ class CreateOfertaView():
             for i in range(freelancers):
                 serializer = OfertasSerializer(data=request.data)
                 if serializer.is_valid():
-                    Utils.validator(serializer.validated_data)
+                    Validator(serializer.validated_data)
                     if estabelecimento.ofertas_para_publicar > 0:
                         serializer.save(owner=request.user)
                         response.append(serializer.data)
@@ -56,7 +56,7 @@ class CreateOfertaView():
         else:
             serializer = OfertasSerializer(data=request.data)
             if serializer.is_valid():
-                Utils.validator(serializer.validated_data)
+                Validator(serializer.validated_data)
                 serializer.save(owner=request.user)
                 estabelecimento.ofertas_para_publicar = estabelecimento.ofertas_para_publicar - 1
                 estabelecimento.save()
@@ -116,7 +116,7 @@ class UpdateOfertaView():
         if IsOwnerOrReadOnly.has_object_permission(request, oferta):
             serializer = OfertasSerializer(oferta, data=request.data)
             if serializer.is_valid():
-                Utils.validator(serializer.validated_data)
+                Validator(serializer.validated_data)
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
             raise ValidationError(detail="Não foi possível atualizar este trampo, \

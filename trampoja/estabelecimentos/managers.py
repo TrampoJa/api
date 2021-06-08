@@ -1,7 +1,7 @@
 from django.db import models
 from rest_framework.exceptions import ValidationError, NotFound, PermissionDenied
 
-from .utils import *
+from utils.validator import Validator
 
 from users.serializers import UserSerializer
 
@@ -20,7 +20,7 @@ class EstabelecimentoManager(models.Manager):
             raise NotFound(detail=["Estabelecimento não encontrado."])
 
     def create_estabelecimento(self, estabelecimento, user):
-        Utils.validator(estabelecimento.validated_data)
+        Validator(estabelecimento.validated_data)
         estabelecimento.save(owner=user)
         user = self.set_group(user)
         return [estabelecimento.data, user.data]
@@ -32,7 +32,7 @@ class EstabelecimentoManager(models.Manager):
         return user
 
     def update(self, estabelecimento):
-        Utils.validator(estabelecimento.validated_data)
+        Validator(estabelecimento.validated_data)
         estabelecimento.save()
         return estabelecimento.data
 
