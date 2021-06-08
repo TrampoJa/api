@@ -50,7 +50,7 @@ $ cd ~/.www/api.trampoja.com
 $ pip3.8 install virtualenv
 $ virtualenv env
 $ source env/bin/activate
-$ pip3.8 install -U django djangorestframework httpie pillow requests django-cors-headers gunicorn redis celery
+$ pip3.8 install -U django djangorestframework httpie pillow requests django-cors-headers gunicorn redis celery psycopg2-binary psycopg2 python-dotenv
 $ deactivate
 
 # Instalando e configurando banco de dados postgres

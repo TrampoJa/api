@@ -12,8 +12,10 @@ from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import ValidationError, NotFound, NotAuthenticated
 
 from .serializers import UserSerializer
-from .utils import Validator, Formater
 from .tasks import task_send_welcome_message, task_send_recovery_message
+
+from utils.validator import Validator
+from utils.formater import Formater
 
 
 def get_user(pk):
@@ -34,7 +36,9 @@ class CreateUserView():
                 request.data['email'],
                 request.data['password'],
             )
-            user.first_name = Formater().name(request.data)
+            formater = Formater(
+                [request.data['first_name'], request.data['last_name']])
+            user.first_name = formater[0] + ' ' + formater[1]
             user.save()
             Token.objects.create(user=user)
             serializer = UserSerializer(user)
@@ -73,7 +77,7 @@ class ChangeEmailView():
     @api_view(['PUT', 'POST'])
     @authentication_classes([TokenAuthentication])
     def setEmail(request, format=None):
-        Validator().email(request.data['email'])
+        Validator(request.data)
         try:
             user = request.user
             user.email = request.data['email']
@@ -89,7 +93,7 @@ class ChangePasswordView():
     @api_view(['PUT', 'POST'])
     @authentication_classes([TokenAuthentication])
     def setPassword(request, format=None):
-        Validator().password(request.data['password'])
+        Validator(request.data)
         try:
             user = request.user
             user.set_password(request.data['password'])
