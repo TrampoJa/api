@@ -9,12 +9,13 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import ValidationError, NotFound, PermissionDenied
 
 from .serializers import OfertasSerializer
-from utils.validator import Validator
 from .models import Ofertas
 from .permissions import IsOwnerOrReadOnly
 from .tasks import task_send_nova_oferta_message
 
 from estabelecimentos.models import Estabelecimentos
+
+from utils.validator import Validator
 
 
 def get_oferta(pk):

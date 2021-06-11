@@ -8,7 +8,6 @@ from rest_framework.exceptions import ValidationError, NotFound, PermissionDenie
 
 from .serializers import FreeLancersSerializer
 from .models import FreeLancers
-from utils.validator import Validator
 from .permissions import IsOwnerOrReadOnly
 
 from users.views import get_user
@@ -16,6 +15,8 @@ from users.serializers import UserSerializer
 
 from confirmados.models import Confirmados
 from confirmados.serializers import ConfirmadosSerializer
+
+from utils.validator import Validator
 
 
 def get_freelancer(pk):
