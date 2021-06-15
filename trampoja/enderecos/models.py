@@ -3,6 +3,12 @@ from django.db import models
 
 class Enderecos(models.Model):
 
+    cep = models.CharField(
+        max_length=8,
+        null=True,
+        blank=True
+    )
+
     pais = models.CharField(
         max_length=255,
         default="Brasil",

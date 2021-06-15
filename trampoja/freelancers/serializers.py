@@ -19,7 +19,6 @@ class FreeLancersSerializer(serializers.ModelSerializer):
             'nascimento',
             'foto',
             'rg',
-            'foto_doc',
             'bio',
             'create',
             'owner',

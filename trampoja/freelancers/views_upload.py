@@ -7,6 +7,7 @@ from rest_framework.exceptions import ValidationError, PermissionDenied
 
 from .views import get_freelancer
 from .permissions import IsOwnerOrReadOnly
+from .serializers import FreeLancersSerializer
 
 
 class UploadImageView():
@@ -19,7 +20,8 @@ class UploadImageView():
             try:
                 freelancer.foto = request.data['foto']
                 freelancer.save()
-                return Response({"message": "sucess"}, status=200)
+                freelancer = FreeLancersSerializer(freelancer)
+                return Response({"foto": freelancer.data['foto']}, status=200)
             except Exception:
                 raise ValidationError(
                     detail="Não foi possível fazer o upload da sua foto.")

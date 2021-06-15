@@ -130,9 +130,12 @@ class DeleteOfertaView():
     @authentication_classes([TokenAuthentication])
     def delete(request, pk, format=None):
         oferta = get_oferta(pk)
+        estabelecimento = Estabelecimentos.manager.get(owner=request.user)
         if IsOwnerOrReadOnly.has_object_permission(request, oferta):
             try:
                 oferta.delete()
+                estabelecimento.ofertas_para_publicar = estabelecimento.ofertas_para_publicar + 1
+                estabelecimento.save()
                 return Response(status=status.HTTP_200_OK)
             except Exception:
                 raise ValidationError(detail="Algo deu errado.")

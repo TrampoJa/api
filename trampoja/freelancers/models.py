@@ -51,11 +51,6 @@ class FreeLancers(models.Model):
         blank=True
     )
 
-    foto_doc = models.ImageField(
-        null=True,
-        blank=True
-    )
-
     bio = models.TextField()
 
     create = models.DateTimeField(auto_now_add=True)
@@ -67,3 +62,35 @@ class FreeLancers(models.Model):
         verbose_name = 'freelancer'
         verbose_name_plural = 'freelancers'
         ordering = ['create']
+
+
+class Documentos(models.Model):
+
+    freelancer = models.OneToOneField(
+        FreeLancers,
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False
+    )
+
+    frente = models.ImageField(
+        null=False,
+        blank=False,
+        upload_to=upload_path
+    )
+
+    verso = models.ImageField(
+        null=False,
+        blank=False,
+        upload_to=upload_path
+    )
+
+    selfie = models.ImageField(
+        null=False,
+        blank=False,
+        upload_to=upload_path
+    )
+
+    create = models.DateTimeField(auto_now_add=True)
+
+
