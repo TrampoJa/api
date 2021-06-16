@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from freelancers.models import FreeLancers
+from .models import FreeLancers, Documentos
 
 
 class FreeLancersSerializer(serializers.ModelSerializer):
@@ -27,3 +27,9 @@ class FreeLancersSerializer(serializers.ModelSerializer):
             'numero',
             'bairro'
         ]
+
+
+class DocumentosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Documentos
+        fields = '__all__'

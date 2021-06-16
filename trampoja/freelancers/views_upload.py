@@ -7,7 +7,8 @@ from rest_framework.exceptions import ValidationError, PermissionDenied
 
 from .views import get_freelancer
 from .permissions import IsOwnerOrReadOnly
-from .serializers import FreeLancersSerializer
+from .serializers import FreeLancersSerializer, DocumentosSerializer
+from .models import FreeLancers, Documentos
 
 
 class UploadImageView():
@@ -26,3 +27,43 @@ class UploadImageView():
                 raise ValidationError(
                     detail="Não foi possível fazer o upload da sua foto.")
         raise PermissionDenied(detail=["Você não tem permissão para isso."])
+
+
+class UploadImageDocsView():
+    @csrf_protect
+    @api_view(['POST'])
+    @authentication_classes([TokenAuthentication])
+    def upload(request, step, format=None):
+        freelancer = FreeLancers.objects.get(owner=request.user)
+        
+        try:
+            documento = Documentos.objects.get(freelancer=freelancer)
+        except Documentos.DoesNotExist:
+            documento = Documentos.objects.create(freelancer=freelancer)
+        
+        try:    
+            if step == 0:
+                documento.frente = request.data['foto']
+                field = 'frente'
+
+            elif step == 1:
+                documento.verso = request.data['foto']
+                field = 'verso'
+
+            elif step == 2:
+                documento.selfie = request.data['foto']
+                field = 'selfie'
+                
+            else:
+                raise ValidationError(
+                    detail="Não entendi o que pretende fazer.")
+
+            documento.save()
+            documento = DocumentosSerializer(documento)
+            return Response({"foto": documento.data[field]}, status=200)
+
+        except Exception:
+            raise ValidationError(
+                detail="Não foi possível fazer o upload da sua foto.")
+
+

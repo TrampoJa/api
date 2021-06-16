@@ -84,6 +84,46 @@ class TestUploadFoto(TestFreeLancers):
         self.assertEqual(response.status_code, 400)
 
 
+class TestUploadFotoDocs(TestFreeLancers):
+    def test_upload_photo_sucess_frente(self):
+        photo_file = self.generate_photo_file()
+        data = {
+            'foto': photo_file
+        }
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token3.key}')
+        response = self.client.post(
+            "/freelancer/upload-docs/0", data, format='multipart')
+        self.assertEqual(response.status_code, 200)
+
+    def test_upload_photo_sucess_verso(self):
+        photo_file = self.generate_photo_file()
+        data = {
+            'foto': photo_file
+        }
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token3.key}')
+        response = self.client.post(
+            "/freelancer/upload-docs/1", data, format='multipart')
+        self.assertEqual(response.status_code, 200)
+        
+    def test_upload_photo_sucess_selfie(self):
+        photo_file = self.generate_photo_file()
+        data = {
+            'foto': photo_file
+        }
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token3.key}')
+        response = self.client.post(
+            "/freelancer/upload-docs/2", data, format='multipart')
+        self.assertEqual(response.status_code, 200)
+
+    def test_upload_photo_error(self):
+        photo_file = self.generate_photo_file()
+        data = {}
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token3.key}')
+        response = self.client.post(
+            "/freelancer/upload-docs/1", data, format='multipart')
+        self.assertEqual(response.status_code, 400)
+
+
 class TestFreeLancersCreateView(TestFreeLancers):
     def test_create_freelancer_post_sucess(self):
         data = {

@@ -2,7 +2,11 @@ from django.db import models
 
 
 def upload_path(instance, filename):
-    return ''.join(['fotos/', str(instance.owner) + '/', filename])
+    return ''.join(['freelancers/fotos/', str(instance.owner) + '/', filename])
+
+def upload_path_docs(instance, filename):
+    return ''.join(['freelancers/docs/',
+        str(f'{instance.freelancer_id}-{instance.freelancer}') + '/', filename])
 
 
 class FreeLancers(models.Model):
@@ -74,21 +78,21 @@ class Documentos(models.Model):
     )
 
     frente = models.ImageField(
-        null=False,
-        blank=False,
-        upload_to=upload_path
+        null=True,
+        blank=True,
+        upload_to=upload_path_docs
     )
 
     verso = models.ImageField(
-        null=False,
-        blank=False,
-        upload_to=upload_path
+        null=True,
+        blank=True,
+        upload_to=upload_path_docs
     )
 
     selfie = models.ImageField(
-        null=False,
-        blank=False,
-        upload_to=upload_path
+        null=True,
+        blank=True,
+        upload_to=upload_path_docs
     )
 
     create = models.DateTimeField(auto_now_add=True)
