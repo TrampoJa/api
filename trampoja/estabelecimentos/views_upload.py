@@ -16,11 +16,11 @@ class UploadImageView():
     @api_view(['POST'])
     @authentication_classes([TokenAuthentication])
     def upload(request, pk, format=None):
+        Validator(request.data)
         estabelecimento = Estabelecimentos.manager.get_estabelecimento(pk)
 
         if IsOwnerOrReadOnly.has_object_permission(request, estabelecimento):
             try:
-                Validator(request.data)
                 Estabelecimentos.manager.set_logo(
                     estabelecimento, request.data['logo'])
                 estabelecimento = EstabelecimentosSerializer(estabelecimento)

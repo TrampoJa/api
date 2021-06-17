@@ -17,10 +17,10 @@ class UploadImageView():
     @api_view(['POST'])
     @authentication_classes([TokenAuthentication])
     def upload(request, pk, format=None):
+        Validator(request.data)
         freelancer = get_freelancer(pk)
         if IsOwnerOrReadOnly.has_object_permission(request, freelancer):
             try:
-                Validator(request.data)
                 freelancer.foto = request.data['foto']
                 freelancer.save()
                 freelancer = FreeLancersSerializer(freelancer)
@@ -36,6 +36,7 @@ class UploadImageDocsView():
     @api_view(['POST'])
     @authentication_classes([TokenAuthentication])
     def upload(request, step, format=None):
+        Validator(request.data)
         freelancer = FreeLancers.objects.get(owner=request.user)
 
         try:
@@ -45,17 +46,14 @@ class UploadImageDocsView():
 
         try:
             if step == 0:
-                Validator(request.data)
                 documento.frente = request.data['foto']
                 field = 'frente'
 
             elif step == 1:
-                Validator(request.data)
                 documento.verso = request.data['foto']
                 field = 'verso'
 
             elif step == 2:
-                Validator(request.data)
                 documento.selfie = request.data['foto']
                 field = 'selfie'
 
