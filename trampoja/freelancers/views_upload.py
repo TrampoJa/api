@@ -9,6 +9,7 @@ from .views import get_freelancer
 from .permissions import IsOwnerOrReadOnly
 from .serializers import FreeLancersSerializer, DocumentosSerializer
 from .models import FreeLancers, Documentos
+from utils.validator import Validator
 
 
 class UploadImageView():
@@ -19,6 +20,7 @@ class UploadImageView():
         freelancer = get_freelancer(pk)
         if IsOwnerOrReadOnly.has_object_permission(request, freelancer):
             try:
+                Validator(request.data)
                 freelancer.foto = request.data['foto']
                 freelancer.save()
                 freelancer = FreeLancersSerializer(freelancer)
@@ -35,29 +37,31 @@ class UploadImageDocsView():
     @authentication_classes([TokenAuthentication])
     def upload(request, step, format=None):
         freelancer = FreeLancers.objects.get(owner=request.user)
-        
+
         try:
             documento = Documentos.objects.get(freelancer=freelancer)
         except Documentos.DoesNotExist:
             documento = Documentos.objects.create(freelancer=freelancer)
-        
-        try:    
+
+        try:
             if step == 0:
+                Validator(request.data)
                 documento.frente = request.data['foto']
                 field = 'frente'
 
             elif step == 1:
+                Validator(request.data)
                 documento.verso = request.data['foto']
                 field = 'verso'
 
             elif step == 2:
+                Validator(request.data)
                 documento.selfie = request.data['foto']
                 field = 'selfie'
-                
+
             else:
                 raise ValidationError(
                     detail="Não entendi o que pretende fazer.")
-
             documento.save()
             documento = DocumentosSerializer(documento)
             return Response({"foto": documento.data[field]}, status=200)
@@ -65,5 +69,3 @@ class UploadImageDocsView():
         except Exception:
             raise ValidationError(
                 detail="Não foi possível fazer o upload da sua foto.")
-
-

@@ -76,8 +76,9 @@ class TestUploadFoto(TestFreeLancers):
         self.assertEqual(response.status_code, 403)
 
     def test_upload_photo_error(self):
-        photo_file = self.generate_photo_file()
-        data = {}
+        data = {
+            'foto': ''
+        }
         self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token3.key}')
         response = self.client.post(
             "/freelancer/upload/1", data, format='multipart')

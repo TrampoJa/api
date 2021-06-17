@@ -64,6 +64,16 @@ class Validator:
         if (nascimento >= time):
             raise ValidationError(detail='Você precisa ter mais que 16 anos.')
 
+    def foto(self, foto):
+        import imghdr
+
+        if not foto:
+            raise ValidationError(detail='Foto inválida')
+
+        permitidas = ['png', 'jpg', 'jpeg']
+        if imghdr.what(foto) not in permitidas:
+            raise ValidationError(detail='Foto inválida')
+
     # estabelecimentos
     def cnpj(self, cnpj):
         regex = r'[^\d]'
@@ -82,3 +92,13 @@ class Validator:
         regex = r'[^\w\s]'
         if search(regex, razao_social):
             raise ValidationError(detail='Informe uma razão social válida.')
+
+    def logo(self, logo):
+        import imghdr
+
+        if not logo:
+            raise ValidationError(detail='Logo inválida')
+
+        permitidas = ['png', 'jpg', 'jpeg']
+        if imghdr.what(logo) not in permitidas:
+            raise ValidationError(detail='Logo inválida')

@@ -8,6 +8,7 @@ from rest_framework.exceptions import ValidationError, PermissionDenied
 from .models import Estabelecimentos
 from .permissions import IsOwnerOrReadOnly
 from .serializers import EstabelecimentosSerializer
+from utils.validator import Validator
 
 
 class UploadImageView():
@@ -19,10 +20,12 @@ class UploadImageView():
 
         if IsOwnerOrReadOnly.has_object_permission(request, estabelecimento):
             try:
+                Validator(request.data)
                 Estabelecimentos.manager.set_logo(
                     estabelecimento, request.data['logo'])
                 estabelecimento = EstabelecimentosSerializer(estabelecimento)
-                return Response({"logo": estabelecimento.data['logo']}, status=200)
+                return Response(
+                    {"logo": estabelecimento.data['logo']}, status=200)
             except Exception:
                 raise ValidationError(
                     detail="Não foi possível fazer o upload da sua logo.")
