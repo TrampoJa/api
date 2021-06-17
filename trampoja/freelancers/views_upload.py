@@ -1,4 +1,5 @@
 from django.views.decorators.csrf import csrf_protect
+from django.contrib.auth.decorators import login_required
 
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, authentication_classes
@@ -16,6 +17,7 @@ class UploadImageView():
     @csrf_protect
     @api_view(['POST'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def upload(request, pk, format=None):
         Validator(request.data)
         freelancer = get_freelancer(pk)
@@ -35,6 +37,7 @@ class UploadImageDocsView():
     @csrf_protect
     @api_view(['POST'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def upload(request, step, format=None):
         Validator(request.data)
         freelancer = FreeLancers.objects.get(owner=request.user)

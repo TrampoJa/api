@@ -18,6 +18,7 @@ urlpatterns = [
           views.CountOfertasConfirmadasFreelancerView.count, name='count-ofertas'),
      path('freelancer/historico/<int:pk>',
           views.HistoricoFreelancerView.historico, name='historico'),
+     path('freelancer/docs/', views.PossuiDocumentosFreelancerView.get, name='docs'),
 
      path('freelancer/upload/<int:pk>',
           views_upload.UploadImageView.upload, name='upload'),  

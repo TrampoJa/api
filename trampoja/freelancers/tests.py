@@ -73,7 +73,7 @@ class TestUploadFoto(TestFreeLancers):
         }
         response = self.client.post(
             "/freelancer/upload/1", data, format='multipart')
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 302)
 
     def test_upload_photo_error(self):
         data = {
@@ -294,7 +294,7 @@ class TestCountOfertasConfirmadasFreelancerView(TestFreeLancers):
 
     def test_count_ofertas_freelancer_authentication_error(self):
         response = self.client.get("/freelancer/count-ofertas")
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 302)
 
 
 class TestHistoricoFreelancerView(TestFreeLancers):
@@ -307,3 +307,15 @@ class TestHistoricoFreelancerView(TestFreeLancers):
         self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token.key}')
         response = self.client.get("/freelancer/historico/0")
         self.assertEqual(response.status_code, 400)
+
+
+class TestPossuiDocsFreelancerView(TestFreeLancers):
+    def test_possui_doc_freelancer_sucess(self):
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token.key}')
+        response = self.client.get("/freelancer/docs/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_possui_doc_freelancer_not_authenticate(self):
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + '')
+        response = self.client.get("/freelancer/docs/")
+        self.assertEqual(response.status_code, 401)

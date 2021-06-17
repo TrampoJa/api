@@ -1,4 +1,5 @@
 from django.views.decorators.csrf import csrf_protect
+from django.contrib.auth.decorators import login_required
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -6,8 +7,8 @@ from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import ValidationError, NotFound, PermissionDenied
 
-from .serializers import FreeLancersSerializer
-from .models import FreeLancers
+from .serializers import FreeLancersSerializer, DocumentosSerializer
+from .models import FreeLancers, Documentos
 from .permissions import IsOwnerOrReadOnly
 
 from users.views import get_user
@@ -30,6 +31,7 @@ class CreateFreeLancerView():
     @csrf_protect
     @api_view(['POST'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def create(request, format=None):
         user = get_user(request.user.id)
         serializer = FreeLancersSerializer(data=request.data)
@@ -48,6 +50,7 @@ class CreateFreeLancerView():
 class ListFreeLancerView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def liste(request, format=None):
         freelancers = FreeLancers.objects.all()
         if freelancers is not None:
@@ -59,6 +62,7 @@ class ListFreeLancerView():
 class ProfileFreeLancerView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def profile(request, format=None):
         freelancer = FreeLancers.objects.get(owner_id=request.user.pk)
         if freelancer is not None:
@@ -70,6 +74,7 @@ class ProfileFreeLancerView():
 class DetailFreeLancerView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def detail(request, pk, format=None):
         freelancer = get_freelancer(pk)
         if IsOwnerOrReadOnly.has_object_permission(request, freelancer):
@@ -84,6 +89,7 @@ class UpdateFreeLancerView():
     @csrf_protect
     @api_view(['PUT', 'POST'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def update(request, pk, format=None):
         freelancer = get_freelancer(pk)
         if IsOwnerOrReadOnly.has_object_permission(request, freelancer):
@@ -100,6 +106,7 @@ class UpdateFreeLancerView():
 class DeleteFreeLancerView():
     @api_view(['DELETE'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def delete(request, pk, format=None):
         freelancer = get_freelancer(pk)
         if IsOwnerOrReadOnly.has_object_permission(request, freelancer):
@@ -114,6 +121,7 @@ class DeleteFreeLancerView():
 class CountOfertasConfirmadasFreelancerView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def count(request, format=None):
         try:
             freelancer = FreeLancers.objects.get(owner=request.user)
@@ -128,6 +136,7 @@ class CountOfertasConfirmadasFreelancerView():
 class HistoricoFreelancerView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def historico(request, pk, format=None):
         try:
             historico = []
@@ -149,3 +158,18 @@ class HistoricoFreelancerView():
         except Exception:
             raise ValidationError(
                 detail='Não foi possível exibir o histórico.')
+
+
+class PossuiDocumentosFreelancerView():
+    @api_view(['GET'])
+    @authentication_classes([TokenAuthentication])
+    @login_required()
+    def get(request, format=None):
+        try:
+            freelancer = FreeLancers.objects.get(owner=request.user)
+            documeto = Documentos.objects.get(freelancer=freelancer)
+            documeto = DocumentosSerializer(documeto)
+        
+            return Response(documeto.data['freelancer'], status=status.HTTP_200_OK)
+        except Exception:
+            return Response(status=status.HTTP_200_OK)

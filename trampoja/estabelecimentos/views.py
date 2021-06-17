@@ -1,4 +1,5 @@
 from django.views.decorators.csrf import csrf_protect
+from django.contrib.auth.decorators import login_required
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -17,6 +18,7 @@ class CreateEstabelecimentoView():
     @csrf_protect
     @api_view(['POST'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def create(request, format=None):
         user = get_user(request.user.id)
         estabelecimento = EstabelecimentosSerializer(data=request.data)
@@ -33,6 +35,7 @@ class CreateEstabelecimentoView():
 class ListEstabelecimentoView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def liste(request, format=None):
         estabelecimentos = Estabelecimentos.manager.all()
 
@@ -47,6 +50,7 @@ class ListEstabelecimentoView():
 class ProfileEstabelecimentoView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def profile(request, format=None):
         estabelecimento = Estabelecimentos.manager.get_profile(request.user)
 
@@ -60,6 +64,7 @@ class ProfileEstabelecimentoView():
 class DetailEstabelecimentoView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def detail(request, pk, format=None):
         estabelecimento = Estabelecimentos.manager.get_estabelecimento(pk)
 
@@ -76,6 +81,7 @@ class UpdateEstabelecimentoView():
     @csrf_protect
     @api_view(['PUT', 'POST'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def update(request, pk, format=None):
         estabelecimento = Estabelecimentos.manager.get_estabelecimento(pk)
 
@@ -95,6 +101,7 @@ class UpdateEstabelecimentoView():
 class DeleteEstabelecimentoView():
     @api_view(['DELETE'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def delete(request, pk, format=None):
         estabelecimento = Estabelecimentos.manager.get_estabelecimento(pk)
 

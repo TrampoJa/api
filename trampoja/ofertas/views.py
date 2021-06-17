@@ -1,6 +1,7 @@
 import datetime
 
 from django.views.decorators.csrf import csrf_protect
+from django.contrib.auth.decorators import login_required
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -29,6 +30,7 @@ class CreateOfertaView():
     @csrf_protect
     @api_view(['POST'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def create(request, format=None):  # Criar permissão de estabelecimento
         estabelecimento = Estabelecimentos.manager.get(owner=request.user)
 
@@ -70,6 +72,7 @@ class CreateOfertaView():
 class ListOfertaView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def liste(request, format=None):
         ofertas = Ofertas.objects.filter(
             date_inicial__gte=datetime.date.today())
@@ -82,6 +85,7 @@ class ListOfertaView():
 class ProfileOfertaView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def profile(request, format=None):
         ofertas = Ofertas.objects.filter(
             owner_id=request.user.pk).exclude(status=False)
@@ -94,6 +98,7 @@ class ProfileOfertaView():
 class DetailOfertaView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def detail(request, pk, format=None):
         oferta = get_oferta(pk)
         if IsOwnerOrReadOnly.has_object_permission(request, oferta):
@@ -109,6 +114,7 @@ class UpdateOfertaView():
     @csrf_protect
     @api_view(['PUT', 'POST'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def update(request, pk, format=None):
         oferta = get_oferta(pk)
         if oferta.edit is False:
@@ -128,6 +134,7 @@ class UpdateOfertaView():
 class DeleteOfertaView():
     @api_view(['DELETE'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def delete(request, pk, format=None):
         oferta = get_oferta(pk)
         estabelecimento = Estabelecimentos.manager.get(owner=request.user)

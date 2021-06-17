@@ -70,7 +70,7 @@ class TestUploadLogo(TestEstabelecimentos):
         }
         response = self.client.post(
             "/estabelecimento/upload/1", data, format='multipart')
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 302)
 
     def test_upload_photo_error(self):
         data = {}

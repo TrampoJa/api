@@ -65,6 +65,7 @@ class TestAvaliacoesCreateView(TestAvaliacoes):
             'oferta': self.oferta.pk,
             'nota': 4
         }
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         response = self.client.post("/avaliacao", data)
         self.assertEqual(response.status_code, 400)
 
@@ -74,6 +75,7 @@ class TestAvaliacoesCreateView(TestAvaliacoes):
             'oferta': 0,
             'nota': ''
         }
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         response = self.client.post("/avaliacao", data)
         self.assertEqual(response.status_code, 404)
 
@@ -83,3 +85,7 @@ class TestAvaliacoesGetSelfView(TestAvaliacoes):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         response = self.client.get("/avaliacao/get")
         self.assertEqual(response.status_code, 200)
+
+    def test_getSelf_avaliacao_error_authenticate(self):
+        response = self.client.get("/avaliacao/get")
+        self.assertEqual(response.status_code, 302)
