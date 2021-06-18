@@ -207,3 +207,21 @@ class TestEstabelecimentosDeleteView(TestEstabelecimentos):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token2.key)
         response = self.client.delete("/estabelecimento/delete/1")
         self.assertEqual(response.status_code, 403)
+
+
+class TestEstabelecimentosFindCNPJView(TestEstabelecimentos):
+    def test_find_cnpj(self):
+        data = {
+            'cnpj': '19131243000197'
+        }
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        response = self.client.post("/estabelecimento/findCNPJ/", data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_find_cnpj_error(self):
+        data = {
+            'cnpj': ''
+        }
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        response = self.client.post("/estabelecimento/findCNPJ/", data)
+        self.assertEqual(response.status_code, 400)

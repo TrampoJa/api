@@ -1,3 +1,6 @@
+import requests
+import json
+
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.decorators import login_required
 
@@ -113,3 +116,16 @@ class DeleteEstabelecimentoView():
                 raise ValidationError(detail="Algo deu errado.")
 
         raise PermissionDenied(detail=["Você não tem permissão para isso."])
+
+
+class FindCNPJEstabelecimentoView():
+    @api_view(['POST'])
+    @authentication_classes([TokenAuthentication])
+    @login_required()
+    def find(request, format=None):
+        try:
+            cnpj = request.data['cnpj']
+            response = requests.get(f"https://brasilapi.com.br/api/cnpj/v1/{cnpj}")
+            return Response(json.loads(response.content))
+        except Exception:
+            raise ValidationError(detail="CNPJ inválido")

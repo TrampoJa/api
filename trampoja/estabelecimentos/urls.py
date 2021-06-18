@@ -15,6 +15,8 @@ urlpatterns = [
           views.UpdateEstabelecimentoView.update, name='update-estabelecimento'),
      path('estabelecimento/delete/<int:pk>',
           views.DeleteEstabelecimentoView.delete, name='delete-estabelecimento'),
+     path('estabelecimento/findCNPJ/',
+          views.FindCNPJEstabelecimentoView.find, name='find-cnpj'),
 
      path('estabelecimento/upload/<int:pk>',
           views_upload.UploadImageView.upload, name='upload'),
