@@ -57,6 +57,12 @@ class FreeLancers(models.Model):
 
     bio = models.TextField()
 
+    verificado = models.BooleanField(
+        default=False,
+        null=True,
+        blank=True
+    )
+
     create = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
