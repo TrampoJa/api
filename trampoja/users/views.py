@@ -82,6 +82,13 @@ class ChangeEmailView():
     @login_required()
     def setEmail(request, format=None):
         Validator(request.data)
+        
+        try:
+            user = User.objects.get(email=request.data['email'])          
+            return Response(["Email já cadastrado"], status=400)
+        except Exception:
+            ...
+
         try:
             user = request.user
             user.email = request.data['email']
