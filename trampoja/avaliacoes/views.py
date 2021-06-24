@@ -1,5 +1,6 @@
 from django.db.models import Avg
 from django.views.decorators.csrf import csrf_protect
+from django.contrib.auth.decorators import login_required
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -26,6 +27,7 @@ class CreateAvaliacaoView():
     @csrf_protect
     @api_view(['POST'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def create(request, format=None):
         owner = get_user(request.data['owner'])
         oferta = get_oferta(request.data['oferta'])
@@ -46,6 +48,7 @@ class CreateAvaliacaoView():
 class GetSelfAvaliacaoView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def getSelf(request, format=None):
         try:
             avaliacoes = Avaliacoes.objects.filter(

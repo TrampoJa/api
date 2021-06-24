@@ -3,6 +3,7 @@ from datetime import timedelta
 
 from django.http import *
 from django.views.decorators.csrf import csrf_protect
+from django.contrib.auth.decorators import login_required
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -33,6 +34,7 @@ class CreateCanceladoView():
     @csrf_protect
     @api_view(['POST'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def create(request, format=None):
         oferta = get_oferta(request.data['oferta'])
         freelancer = get_freelancer(request.data['freelancer'])
@@ -82,6 +84,7 @@ class CreateCanceladoView():
 class ListToFreelancerCanceladosView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def listToFreelancer(request, format=None):
         cancelados = Cancelados.objects.filter(owner_id=request.user.pk)
         if cancelados is not None:
@@ -94,6 +97,7 @@ class ListToFreelancerCanceladosView():
 class ListToEstabelecimentoCanceladosView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def listToEstabelecimento(request, format=None):
         cancelados = Cancelados.objects.filter(
             oferta__owner_id=request.user.pk)

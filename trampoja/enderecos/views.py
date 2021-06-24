@@ -1,4 +1,5 @@
 from django.views.decorators.csrf import csrf_protect
+from django.contrib.auth.decorators import login_required
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -21,6 +22,7 @@ class CreateEnderecoView():
     @csrf_protect
     @api_view(['POST'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def create(request, format=None):
         serializer = EnderecosSerializer(data=request.data)
         if serializer.is_valid():
@@ -33,6 +35,7 @@ class CreateEnderecoView():
 class ProfileEnderecoView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def profile(request, format=None):
         endereco = Enderecos.objects.get(owner_id=request.user.pk)
         if endereco is not None:
@@ -45,6 +48,7 @@ class UpdateEnderecoView():
     @csrf_protect
     @api_view(['PUT', 'POST'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def update(request, pk, format=None):
         endereco = get_endereco(pk)
         serializer = EnderecosSerializer(endereco, data=request.data)

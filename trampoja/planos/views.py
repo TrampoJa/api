@@ -1,4 +1,5 @@
 from django.views.decorators.csrf import csrf_protect
+from django.contrib.auth.decorators import login_required
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -18,6 +19,7 @@ class setPlanoEstabelecimento():
     @csrf_protect
     @api_view(['POST'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def set_plano(request, format=None):
         estabelecimento = Estabelecimentos.manager.get_estabelecimento(
             request.data['estabelecimento'])
@@ -40,6 +42,7 @@ class setPlanoEstabelecimento():
 class ListPlanosView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def liste(request, format=None):
         planos = Planos.manager.all()
 

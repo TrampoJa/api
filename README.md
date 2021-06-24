@@ -3,12 +3,15 @@
 
 [![NPM](https://img.shields.io/badge/license-proprietary-red)](https://github.com/TrampoJa/api.trampoja.com/LICENSE)
 
-## Indice:
-- [Sobre](#-sobre)
-- [Tecnologias utilizadas](#-Tecnologias-utilizadas)
-- [Setup](#-setup)
-- [Run](#-run)
-- [Tests](#-tests)
+<details open>
+<summary>Indice:</summary>
+
++ [Sobre](#sobre)
++ [Tecnologias utilizadas](#tecnologias-utilizadas)
++ [Setup](#setup)
++ [Run](#run)
++ [Tests](#tests)
+</details>
 
 
 ## Sobre

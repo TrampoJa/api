@@ -18,7 +18,7 @@ class TestPlanos(TestCase):
 
 
 class TestPlanosListView(TestPlanos):
-    def test_liste_ofertas(self):
+    def test_liste_planos(self):
         self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token.key}')
         response = self.client.get("/planos/liste")
         self.assertEqual(response.status_code, 200)

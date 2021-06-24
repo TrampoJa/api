@@ -138,8 +138,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.BasicAuthentication'
     ),
 }
 
@@ -147,9 +148,15 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 EMAIL_HOST = os.getenv('SMTP_HOST')
 
+<<<<<<< HEAD
 EMAIL_HOST_USER = os.getenv('SMTP_USER')
 
 EMAIL_HOST_PASSWORD = os.getenv('SMTP_PASSWORD')
+=======
+EMAIL_HOST_USER = 'testesmtp@trampoja.com'
+
+EMAIL_HOST_PASSWORD = 'gtr400'
+>>>>>>> origin/Beta
 
 EMAIL_PORT = os.getenv('SMTP_PORT')
 
@@ -183,7 +190,7 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static/'),
 )
 
-LOGIN_URL = 'loginUser'
+LOGIN_URL = 'login'
 
 
 # CELERY

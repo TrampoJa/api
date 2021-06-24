@@ -1,6 +1,7 @@
 import datetime
 
 from django.views.decorators.csrf import csrf_protect
+from django.contrib.auth.decorators import login_required
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -9,12 +10,13 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.exceptions import ValidationError, NotFound, PermissionDenied
 
 from .serializers import OfertasSerializer
-from .utils import Utils
 from .models import Ofertas
 from .permissions import IsOwnerOrReadOnly
 from .tasks import task_send_nova_oferta_message
 
 from estabelecimentos.models import Estabelecimentos
+
+from utils.validator import Validator
 
 
 def get_oferta(pk):
@@ -28,6 +30,7 @@ class CreateOfertaView():
     @csrf_protect
     @api_view(['POST'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def create(request, format=None):  # Criar permissão de estabelecimento
         estabelecimento = Estabelecimentos.manager.get(owner=request.user)
 
@@ -41,7 +44,7 @@ class CreateOfertaView():
             for i in range(freelancers):
                 serializer = OfertasSerializer(data=request.data)
                 if serializer.is_valid():
-                    Utils.validator(serializer.validated_data)
+                    Validator(serializer.validated_data)
                     if estabelecimento.ofertas_para_publicar > 0:
                         serializer.save(owner=request.user)
                         response.append(serializer.data)
@@ -56,7 +59,7 @@ class CreateOfertaView():
         else:
             serializer = OfertasSerializer(data=request.data)
             if serializer.is_valid():
-                Utils.validator(serializer.validated_data)
+                Validator(serializer.validated_data)
                 serializer.save(owner=request.user)
                 estabelecimento.ofertas_para_publicar = estabelecimento.ofertas_para_publicar - 1
                 estabelecimento.save()
@@ -69,6 +72,7 @@ class CreateOfertaView():
 class ListOfertaView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def liste(request, format=None):
         ofertas = Ofertas.objects.filter(
             date_inicial__gte=datetime.date.today())
@@ -81,6 +85,7 @@ class ListOfertaView():
 class ProfileOfertaView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def profile(request, format=None):
         ofertas = Ofertas.objects.filter(
             owner_id=request.user.pk).exclude(status=False)
@@ -93,6 +98,7 @@ class ProfileOfertaView():
 class DetailOfertaView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def detail(request, pk, format=None):
         oferta = get_oferta(pk)
         if IsOwnerOrReadOnly.has_object_permission(request, oferta):
@@ -108,6 +114,7 @@ class UpdateOfertaView():
     @csrf_protect
     @api_view(['PUT', 'POST'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def update(request, pk, format=None):
         oferta = get_oferta(pk)
         if oferta.edit is False:
@@ -116,7 +123,7 @@ class UpdateOfertaView():
         if IsOwnerOrReadOnly.has_object_permission(request, oferta):
             serializer = OfertasSerializer(oferta, data=request.data)
             if serializer.is_valid():
-                Utils.validator(serializer.validated_data)
+                Validator(serializer.validated_data)
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
             raise ValidationError(detail="Não foi possível atualizar este trampo, \
@@ -127,11 +134,15 @@ class UpdateOfertaView():
 class DeleteOfertaView():
     @api_view(['DELETE'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def delete(request, pk, format=None):
         oferta = get_oferta(pk)
+        estabelecimento = Estabelecimentos.manager.get(owner=request.user)
         if IsOwnerOrReadOnly.has_object_permission(request, oferta):
             try:
                 oferta.delete()
+                estabelecimento.ofertas_para_publicar = estabelecimento.ofertas_para_publicar + 1
+                estabelecimento.save()
                 return Response(status=status.HTTP_200_OK)
             except Exception:
                 raise ValidationError(detail="Algo deu errado.")
