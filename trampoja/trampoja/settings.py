@@ -146,9 +146,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 EMAIL_HOST = 'mail.trampoja.com'
 
-EMAIL_HOST_USER = 'contato@trampoja.com'
+EMAIL_HOST_USER = 'testesmtp@trampoja.com'
 
-EMAIL_HOST_PASSWORD = 'SemMigue@10'
+EMAIL_HOST_PASSWORD = 'gtr400'
 
 EMAIL_PORT = '587'
 
