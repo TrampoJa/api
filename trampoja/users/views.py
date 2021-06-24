@@ -2,6 +2,7 @@ from random import randint
 
 from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_protect
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
 from rest_framework.response import Response
@@ -52,6 +53,7 @@ class CreateUserView():
 class ProfileUserView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def profile(request, format=None):
         user = get_user(request.user.pk)
         if user is not None:
@@ -63,6 +65,7 @@ class ProfileUserView():
 class DetailUserView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def detail(request, pk, format=None):
         user = get_user(pk)
         if user is not None:
@@ -76,8 +79,16 @@ class ChangeEmailView():
     @csrf_protect
     @api_view(['PUT', 'POST'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def setEmail(request, format=None):
         Validator(request.data)
+        
+        try:
+            user = User.objects.get(email=request.data['email'])          
+            return Response(["Email já cadastrado"], status=400)
+        except Exception:
+            ...
+
         try:
             user = request.user
             user.email = request.data['email']
@@ -92,6 +103,7 @@ class ChangePasswordView():
     @csrf_protect
     @api_view(['PUT', 'POST'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def setPassword(request, format=None):
         Validator(request.data)
         try:
@@ -106,7 +118,6 @@ class ChangePasswordView():
 class RecoveryPasswordView():
     @csrf_protect
     @api_view(['POST'])
-    @authentication_classes([TokenAuthentication])
     def recovery(request, format=None):
         try:
             user = User.objects.get(username=request.data['email'])

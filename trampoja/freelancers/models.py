@@ -2,7 +2,11 @@ from django.db import models
 
 
 def upload_path(instance, filename):
-    return ''.join(['fotos/', str(instance.owner) + '/', filename])
+    return ''.join(['freelancers/fotos/', str(instance.owner) + '/', filename])
+
+def upload_path_docs(instance, filename):
+    return ''.join(['freelancers/docs/',
+        str(f'{instance.freelancer_id}-{instance.freelancer}') + '/', filename])
 
 
 class FreeLancers(models.Model):
@@ -51,12 +55,13 @@ class FreeLancers(models.Model):
         blank=True
     )
 
-    foto_doc = models.ImageField(
+    bio = models.TextField()
+
+    verificado = models.BooleanField(
+        default=False,
         null=True,
         blank=True
     )
-
-    bio = models.TextField()
 
     create = models.DateTimeField(auto_now_add=True)
 
@@ -67,3 +72,35 @@ class FreeLancers(models.Model):
         verbose_name = 'freelancer'
         verbose_name_plural = 'freelancers'
         ordering = ['create']
+
+
+class Documentos(models.Model):
+
+    freelancer = models.OneToOneField(
+        FreeLancers,
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False
+    )
+
+    frente = models.ImageField(
+        null=True,
+        blank=True,
+        upload_to=upload_path_docs
+    )
+
+    verso = models.ImageField(
+        null=True,
+        blank=True,
+        upload_to=upload_path_docs
+    )
+
+    selfie = models.ImageField(
+        null=True,
+        blank=True,
+        upload_to=upload_path_docs
+    )
+
+    create = models.DateTimeField(auto_now_add=True)
+
+

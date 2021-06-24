@@ -149,12 +149,29 @@ class TestOfertasCreateView(TestOfertas):
         response = self.client.post("/ofertas/create", data)
         self.assertEqual(response.status_code, 400)
 
+    def test_create_ofertas_post_error_authenticate(self):
+        data = {
+            'nome': '',
+            'valor': '',
+            'time': '',
+            'date_inicial': '',
+            'obs': '',
+            'date_final': '',
+            'freelancers': '0'
+        }
+        response = self.client.post("/ofertas/create", data)
+        self.assertEqual(response.status_code, 302)
+
 
 class TestOfertasListView(TestOfertas):
     def test_liste_ofertas(self):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         response = self.client.get("/ofertas/liste")
         self.assertEqual(response.status_code, 200)
+
+    def test_liste_ofertas_error_authenticate(self):
+        response = self.client.get("/ofertas/liste")
+        self.assertEqual(response.status_code, 302)
 
 
 class TestOfertasProfileView(TestOfertas):

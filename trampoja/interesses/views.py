@@ -1,4 +1,5 @@
 from django.views.decorators.csrf import csrf_protect
+from django.contrib.auth.decorators import login_required
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -25,6 +26,7 @@ class CreateInteresseView():
     @csrf_protect
     @api_view(['POST'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def create(request, format=None):
         if IsFreelancerOrReadOnly.has_object_permission(request):
             oferta = get_oferta(request.data['id'])
@@ -53,6 +55,7 @@ class CreateInteresseView():
 class ListToFreelancerInteresseView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def listToFreelancer(request, format=None):
         interesses = Interesses.objects.filter(owner_id=request.user.pk)
         if interesses is not None:
@@ -64,6 +67,7 @@ class ListToFreelancerInteresseView():
 class ListToEstabelecimentoInteresseView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def listToEstabelecimento(request, format=None):
         interesses = Interesses.objects.filter(
             oferta__owner_id=request.user.pk)

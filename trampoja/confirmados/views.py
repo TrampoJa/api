@@ -1,6 +1,7 @@
 import datetime
 
 from django.views.decorators.csrf import csrf_protect
+from django.contrib.auth.decorators import login_required
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -29,6 +30,7 @@ class CreateConfirmadoView():
     @csrf_protect
     @api_view(['POST'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def create(request, format=None):
         if IsEstabelecimentoOrReadOnly.has_object_permission(request):
             oferta = get_oferta(request.data['oferta'])
@@ -59,6 +61,7 @@ class CreateConfirmadoView():
 class ListToFreelancerConfirmadoView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def listToFreelancer(request, format=None):
         confirmados = Confirmados.objects.filter(owner_id=request.user.pk)
         if confirmados is not None:
@@ -71,6 +74,7 @@ class ListToFreelancerConfirmadoView():
 class ListToEstabelecimentoConfirmadoView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def listToEstabelecimento(request, format=None):
         confirmados = Confirmados.objects.filter(
             oferta__owner_id=request.user.pk)

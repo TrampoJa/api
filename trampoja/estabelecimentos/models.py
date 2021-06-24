@@ -4,7 +4,7 @@ from .managers import EstabelecimentoManager
 
 
 def upload_path(instance, filename):
-    return ''.join(['logos/', str(instance.owner) + '/', filename])
+    return ''.join(['estabelecimento/logos/', str(instance.owner) + '/', filename])
 
 
 class Estabelecimentos(models.Model):
