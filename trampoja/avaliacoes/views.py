@@ -28,21 +28,24 @@ class CreateAvaliacaoView():
     @api_view(['POST'])
     @authentication_classes([TokenAuthentication])
     @login_required()
-    def create(request, format=None):
+    def create(request, format=None):    
         owner = get_user(request.data['owner'])
         oferta = get_oferta(request.data['oferta'])
+
         if Avaliacoes.objects.filter(owner=owner, oferta=oferta):
             raise ValidationError(detail="Ops, você já avaliou este trampo!")
+        
         try:
-            a = Avaliacoes.objects.create(
-                owner=owner, oferta=oferta, nota=request.data['nota'])
+            avaliacao = Avaliacoes.objects.create(
+                owner=owner, oferta=oferta, nota=request.data['nota']
+            )
             oferta.closed = True
             oferta.save()
-            serializer = AvaliacoesSerializer(a)
+            serializer = AvaliacoesSerializer(avaliacao)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception:
             raise ValidationError(
-                detail="Ops, não foi possível avaliar este trampos!")
+                detail="Ops, não foi possível avaliar este trampo!")
 
 
 class GetSelfAvaliacaoView():
