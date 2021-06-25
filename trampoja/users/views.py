@@ -31,6 +31,13 @@ class CreateUserView():
     @api_view(['POST'])
     def create(request, format=None):
         Validator(request.data)
+        
+        try:
+            user = User.objects.get(email=request.data['email'])          
+            return Response(["Email já cadastrado"], status=400)
+        except Exception:
+            ...
+        
         try:
             user = User.objects.create_user(
                 request.data['username'],
@@ -46,8 +53,10 @@ class CreateUserView():
             task_send_welcome_message.delay(user.email, user.first_name)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception:
-            raise ValidationError(detail="Não foi possível realizar cadastro, \
-                    verfique os dados informados e tente novamente.")
+            raise ValidationError(detail=
+                    'Não foi possível realizar cadastro, '
+                    'verfique os dados informados e tente novamente.'
+                )
 
 
 class ProfileUserView():
