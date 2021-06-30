@@ -14,7 +14,8 @@ class Validator:
 
     # users
     def password(self, password):
-        if (len(password) < 6):
+        passLen = len(password)
+        if (passLen < 6 or passLen > 30):
             raise ValidationError(detail='Senha inválida.')
 
     def email(self, email):
