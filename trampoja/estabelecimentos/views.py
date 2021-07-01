@@ -31,8 +31,10 @@ class CreateEstabelecimentoView():
                 estabelecimento, user)
             return Response(response, status=status.HTTP_201_CREATED)
 
-        raise ValidationError(detail="Não foi possível finalizar seu cadastro, \
-                verifique os dados informados e tente novamente")
+        raise ValidationError(detail=
+                'Não foi possível finalizar seu cadastro, '
+                'verifique os dados informados e tente novamente'
+            )
 
 
 class ListEstabelecimentoView():
@@ -95,8 +97,10 @@ class UpdateEstabelecimentoView():
                 estabelecimento = Estabelecimentos.manager.update(
                     estabelecimento)
                 return Response(estabelecimento, status=status.HTTP_200_OK)
-            raise ValidationError(detail="Não foi possível atualizar seus dados, \
-                    verifique os dados informados e tente novamente.")
+            raise ValidationError(detail=
+                    'Não foi possível atualizar seus dados, '
+                    'verifique os dados informados e tente novamente.'
+                )
 
         raise PermissionDenied(detail=["Você não tem permissão para isso."])
 

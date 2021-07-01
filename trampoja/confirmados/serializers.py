@@ -30,12 +30,30 @@ class ConfirmadosSerializer(serializers.ModelSerializer):
         source='oferta.owner.estabelecimento.id')
     estabelecimento_owner = serializers.ReadOnlyField(source='oferta.owner.id')
     avaliacao = serializers.SerializerMethodField()
+    freelancer_avaliacao = serializers.SerializerMethodField()
+    estabelecimento_avaliacao = serializers.SerializerMethodField()
     trampos = serializers.SerializerMethodField()
 
     def get_avaliacao(self, confirmado):
         avaliacao = Avaliacoes.objects.filter(
             owner_id=confirmado.owner.id).aggregate(Avg('nota'))
         return avaliacao['nota__avg']
+
+    def get_freelancer_avaliacao(self, confirmado):
+        try:
+            avaliacao = Avaliacoes.objects.get(
+                owner_id=confirmado.oferta.owner_id, oferta=confirmado.oferta)
+            return avaliacao.nota
+        except Avaliacoes.DoesNotExist:
+            ...
+
+    def get_estabelecimento_avaliacao(self, confirmado):
+        try:
+            avaliacao = Avaliacoes.objects.get(
+                owner_id=confirmado.owner.id, oferta=confirmado.oferta)
+            return avaliacao.nota
+        except Avaliacoes.DoesNotExist:
+            ...
 
     def get_trampos(self, confirmado):
         trampos = Confirmados.objects.filter(
@@ -67,5 +85,7 @@ class ConfirmadosSerializer(serializers.ModelSerializer):
             'estabelecimento_id',
             'avaliacao',
             'trampos',
+            'freelancer_avaliacao',
+            'estabelecimento_avaliacao',
             'create'
         ]
