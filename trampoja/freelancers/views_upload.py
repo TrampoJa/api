@@ -10,7 +10,9 @@ from .views import get_freelancer
 from .permissions import IsOwnerOrReadOnly
 from .serializers import FreeLancersSerializer, DocumentosSerializer
 from .models import FreeLancers, Documentos
+
 from utils.validator import Validator
+from utils.formater import Formater
 
 
 class UploadImageView():
@@ -23,7 +25,10 @@ class UploadImageView():
         freelancer = get_freelancer(pk)
         if IsOwnerOrReadOnly.has_object_permission(request, freelancer):
             try:
-                freelancer.foto = request.data['foto']
+                image = Formater.formaterImageName(
+                    request.data['foto'], 'foto')
+                
+                freelancer.foto = image
                 freelancer.save()
                 freelancer = FreeLancersSerializer(freelancer)
                 return Response({"foto": freelancer.data['foto']}, status=200)
@@ -49,16 +54,24 @@ class UploadImageDocsView():
 
         try:
             if step == 0:
-                documento.frente = request.data['foto']
                 field = 'frente'
+                image = Formater.formaterImageName(
+                    request.data['foto'], field)
+                documento.frente = image
+                
 
             elif step == 1:
-                documento.verso = request.data['foto']
                 field = 'verso'
+                image = Formater.formaterImageName(
+                    request.data['foto'], field)
+                documento.verso = image
+            
 
             elif step == 2:
-                documento.selfie = request.data['foto']
                 field = 'selfie'
+                image = Formater.formaterImageName(
+                    request.data['foto'], field)
+                documento.selfie = image
 
             else:
                 raise ValidationError(
