@@ -31,7 +31,7 @@ class CreateOfertaView():
     @api_view(['POST'])
     @authentication_classes([TokenAuthentication])
     @login_required()
-    def create(request, format=None):  # Criar permissão de estabelecimento
+    def create(request, format=None):  #TODO: Criar permissão de estabelecimento
         estabelecimento = Estabelecimentos.manager.get(owner=request.user)
 
         if estabelecimento.ofertas_para_publicar == 0:
@@ -43,6 +43,7 @@ class CreateOfertaView():
         if freelancers > 1:
             for i in range(freelancers):
                 serializer = OfertasSerializer(data=request.data)
+                
                 if serializer.is_valid():
                     Validator(serializer.validated_data)
                     if estabelecimento.ofertas_para_publicar > 0:
@@ -51,22 +52,30 @@ class CreateOfertaView():
                         estabelecimento.ofertas_para_publicar = estabelecimento.ofertas_para_publicar - 1
                         estabelecimento.save()
                 else:
-                    raise ValidationError(detail="Não foi possível criar estes trampos, \
-                            verfique os dados informados e tente novamente.")
+                    raise ValidationError(detail=
+                            'Não foi possível criar estes trampos, '
+                            'verfique os dados informados e tente novamente.'
+                        )
 
             task_send_nova_oferta_message.delay()
             return Response(response, status=status.HTTP_201_CREATED)
+        
         else:
             serializer = OfertasSerializer(data=request.data)
+            
             if serializer.is_valid():
                 Validator(serializer.validated_data)
                 serializer.save(owner=request.user)
                 estabelecimento.ofertas_para_publicar = estabelecimento.ofertas_para_publicar - 1
                 estabelecimento.save()
                 task_send_nova_oferta_message.delay()
+                
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
-            raise ValidationError(detail="Não foi possível criar este trampo, \
-                    verfique os dados informados e tente novamente.")
+            
+            raise ValidationError(detail=
+                            'Não foi possível criar este trampo, '
+                            'verfique os dados informados e tente novamente.'
+                        )
 
 
 class ListOfertaView():
@@ -118,16 +127,20 @@ class UpdateOfertaView():
     def update(request, pk, format=None):
         oferta = get_oferta(pk)
         if oferta.edit is False:
-            raise ValidationError(detail="Já existem freelancers interessados neste trampo. \
-                Ele não pode mais ser editado.")
+            raise ValidationError(detail=
+                'Já existem freelancers interessados neste trampo. '
+                'Ele não pode mais ser editado.'
+            )
         if IsOwnerOrReadOnly.has_object_permission(request, oferta):
             serializer = OfertasSerializer(oferta, data=request.data)
             if serializer.is_valid():
                 Validator(serializer.validated_data)
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            raise ValidationError(detail="Não foi possível atualizar este trampo, \
-                    verifique os dados informados e tente novamente.")
+            raise ValidationError(detail=
+                    'Não foi possível atualizar este trampo, '
+                    'verifique os dados informados e tente novamente.'
+                )
         raise PermissionDenied(detail=["Você não tem permissão para isso."])
 
 

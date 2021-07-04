@@ -43,8 +43,10 @@ class CreateFreeLancerView():
             userSerializer = UserSerializer(user)
             return Response([serializer.data, userSerializer.data],
                             status=status.HTTP_201_CREATED)
-        raise ValidationError(detail="Não foi possível finalizar seu cadastro, \
-                verifique os dados informados e tente novamente")
+        raise ValidationError(detail=
+                'Não foi possível finalizar seu cadastro, '
+                'verifique os dados informados e tente novamente'
+            )
 
 
 class ListFreeLancerView():
@@ -98,8 +100,10 @@ class UpdateFreeLancerView():
                 Validator(serializer.validated_data)
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            raise ValidationError(detail="Não foi possível atualizar seus dados, \
-                    verifique os dados informados e tente novamente.")
+            raise ValidationError(detail=
+                    'Não foi possível atualizar seus dados, '
+                    'verifique os dados informados e tente novamente.'
+                )
         raise PermissionDenied(detail=["Você não tem permissão para isso."])
 
 

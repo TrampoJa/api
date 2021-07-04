@@ -28,8 +28,10 @@ class CreateEnderecoView():
         if serializer.is_valid():
             serializer.save(owner=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        raise ValidationError(detail="Não foi possível criar endereço, verifique os dados informados \
-                e tente novamente.")
+        raise ValidationError(detail=
+                'Não foi possível criar endereço, verifique '
+                'os dados informados e tente novamente.'
+            )
 
 
 class ProfileEnderecoView():
@@ -55,5 +57,7 @@ class UpdateEnderecoView():
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
-        raise ValidationError(detail="Não foi possível atualizar seu endereço, \
-                verifique os dados informados e tente novamente.")
+        raise ValidationError(detail=
+                'Não foi possível atualizar seu endereço, '
+                'verifique os dados informados e tente novamente.'
+            )

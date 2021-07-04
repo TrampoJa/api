@@ -47,13 +47,17 @@ class CreateCanceladoView():
                 if hora_limite.time() > oferta.time:
                     oferta.closed = True
                     oferta.save()
-                    raise ValidationError(detail="Não foi possível cancelar trampo. \
-                            Só é possível cancelar com 6 horas de antecedência.")
+                    raise ValidationError(detail=
+                            'Não foi possível cancelar trampo, '
+                            'só é possível cancelar com 6 horas de antecedência.'
+                        )
             if oferta.date_inicial < datetime.date.today():
                 oferta.closed = True
                 oferta.save()
-                raise ValidationError(detail="Não foi possível cancelar. \
-                        Esse trampo já aconteceu.")
+                raise ValidationError(detail=
+                        'Não foi possível cancelar. '
+                        'Esse trampo já aconteceu.'
+                    )
             try:
                 c = Cancelados.objects.create(oferta=oferta, owner=freelancer.owner, autor=autor,
                                               justificativa=request.data['justificativa'])
