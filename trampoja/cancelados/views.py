@@ -42,7 +42,7 @@ class CreateCanceladoView():
         hora_limite = datetime.datetime.now() + timedelta(hours=6)
 
         if IsOwnerOrReadOnly.has_object_permission(request):
-            autor = 'F' if request.user.last_name == "Freelancer" else 'E'
+            autor = 'F' if request.user.groups.get().name == "Freelancer" else 'E'
             if oferta.date_inicial == datetime.date.today():
                 if hora_limite.time() > oferta.time:
                     oferta.closed = True
@@ -66,13 +66,13 @@ class CreateCanceladoView():
                 oferta.save()
                 confirmado.delete()
                 serializer = CanceladosSerializer(c)
-                if request.user.last_name == 'Freelancer':
+                if request.user.groups.get().name == 'Freelancer':
                     task_send_cancelados_message.delay(
                         serializer.data['estabelecimento_email'],
                         serializer.data['freelancer_nome'],
                         serializer.data['oferta_nome'],
                     )
-                if request.user.last_name == 'Estabelecimento':
+                if request.user.groups.get().name == 'Estabelecimento':
                     task_send_cancelados_message.delay(
                         serializer.data['freelancer_email'],
                         serializer.data['estabelecimento'],

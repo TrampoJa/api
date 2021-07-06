@@ -1,12 +1,23 @@
 from django.test import TestCase
 from .send_messages import *
+from django.contrib.auth.models import Group, User
 
 
 class TestEmailMessages(TestCase):
     def setUp(self):
+        freelancerGroup = Group.objects.create(name="Freelancer")
+
         self.nome = 'Teste'
         self.email = 'teste@teste.com'
         self.oferta = 'Garçom'
+
+        self.writer = User.objects.create_user(
+            'test_user',
+            'test@example.com',
+            'password1'
+        )
+        self.writer.groups.set([freelancerGroup])
+        self.writer.save()
 
 
 class TestWelcomeMessage(TestEmailMessages):

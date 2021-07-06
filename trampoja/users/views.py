@@ -13,6 +13,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import ValidationError, NotFound, NotAuthenticated
 
 from .serializers import UserSerializer
+from .models import User as Manager
 from .tasks import task_send_welcome_message, task_send_recovery_message
 
 from utils.validator import Validator
@@ -44,9 +45,8 @@ class CreateUserView():
                 request.data['email'],
                 request.data['password'],
             )
-            formater = Formater(
-                [request.data['first_name'], request.data['last_name']])
-            user.first_name = formater[0] + ' ' + formater[1]
+            user.first_name = request.data['first_name'] 
+            user.last_name = request.data['last_name']
             user.save()
             Token.objects.create(user=user)
             serializer = UserSerializer(user)
@@ -57,6 +57,22 @@ class CreateUserView():
                     'Não foi possível realizar cadastro, '
                     'verfique os dados informados e tente novamente.'
                 )
+
+
+class SetGroupUserView():
+    @csrf_protect
+    @api_view(['POST'])
+    @authentication_classes([TokenAuthentication])
+    @login_required()
+    def setGroup(request, format=None):
+        user = get_user(request.user.pk)
+        try:
+            user = Manager.set_group(user, request.data['group'])
+            user = UserSerializer(user)
+
+            return Response(user.data)
+        except Exception:
+            return Response(status=200)
 
 
 class ProfileUserView():

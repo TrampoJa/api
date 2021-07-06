@@ -9,9 +9,14 @@ from rest_framework.test import APIClient
 from rest_framework.authtoken.models import Token
 import datetime
 
+from django.contrib.auth.models import Group
+
 
 class TestFreeLancers(TestCase):
     def setUp(self):
+        estabelecimentoGroup = Group.objects.create(name="Estabelecimento")
+        freelancerGroup = Group.objects.create(name="Freelancer")
+        
         self.client = APIClient()
         self.writer = User.objects.create_user(
             'test_user',
