@@ -19,6 +19,8 @@ from confirmados.serializers import ConfirmadosSerializer
 
 from utils.validator import Validator
 
+from users.models import User
+
 
 def get_freelancer(pk):
     try:
@@ -38,8 +40,7 @@ class CreateFreeLancerView():
         if serializer.is_valid():
             Validator(serializer.validated_data)
             serializer.save(owner=request.user)
-            user.last_name = "Freelancer"
-            user.save()
+            user = User.set_group(user, "Freelancer")
             userSerializer = UserSerializer(user)
             return Response([serializer.data, userSerializer.data],
                             status=status.HTTP_201_CREATED)

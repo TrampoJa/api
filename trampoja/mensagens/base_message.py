@@ -3,7 +3,7 @@ class BaseEmailMessage():
         self.email = email
         self.oferta = oferta
         self.nome = nome
-        self.from_email = "contato@trampoja.com"
+        self.from_email = "testesmtp@trampoja.com"
         self.titulo = "TrampoJá"
 
 

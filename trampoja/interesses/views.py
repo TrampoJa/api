@@ -57,7 +57,7 @@ class ListToFreelancerInteresseView():
     @authentication_classes([TokenAuthentication])
     @login_required()
     def listToFreelancer(request, format=None):
-        interesses = Interesses.objects.filter(owner_id=request.user.pk)
+        interesses = Interesses.objects.filter(owner_id=request.user.pk, oferta_id__closed=False)
         if interesses is not None:
             serializer = InteressesSerializer(interesses, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -70,7 +70,7 @@ class ListToEstabelecimentoInteresseView():
     @login_required()
     def listToEstabelecimento(request, format=None):
         interesses = Interesses.objects.filter(
-            oferta__owner_id=request.user.pk)
+            oferta__owner_id=request.user.pk, oferta_id__closed=False)
         if interesses is not None:
             serializer = InteressesSerializer(interesses, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)

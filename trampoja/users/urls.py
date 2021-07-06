@@ -5,6 +5,7 @@ from . import views
 urlpatterns = [
 
      path('auth/register', views.CreateUserView.create, name='register'),
+     path('auth/set-group', views.SetGroupUserView.setGroup, name='set-group'),
      path('auth/profile', views.ProfileUserView.profile, name='profile-user'),
      path('auth/detail/<int:pk>', views.DetailUserView.detail,
           name='detail-user'),

@@ -30,6 +30,8 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'app.trampoja.com']
 
+ADMINS = [('luiz', 'luizdendena@trampoja.com')]
+
 # Application definition
 
 INSTALLED_APPS = [
