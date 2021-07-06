@@ -4,6 +4,7 @@ from rest_framework.exceptions import ValidationError, NotFound, PermissionDenie
 from utils.validator import Validator
 
 from users.serializers import UserSerializer
+from users.models import User
 
 
 class EstabelecimentoManager(models.Manager):
@@ -26,8 +27,7 @@ class EstabelecimentoManager(models.Manager):
         return [estabelecimento.data, user.data]
 
     def set_group(self, user):
-        user.last_name = "Estabelecimento"
-        user.save()
+        user = User.set_group(user, "Estabelecimento")
         user = UserSerializer(user)
         return user
 

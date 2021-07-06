@@ -2,10 +2,14 @@ from django.test import TestCase
 from users.views import User
 from rest_framework.test import APIClient
 from rest_framework.authtoken.models import Token
+from django.contrib.auth.models import Group
 
 
 class TestUsers(TestCase):
     def setUp(self):
+        estabelecimentoGroup = Group.objects.create(name="noGroupEstabelecimento")
+        freelancerGroup = Group.objects.create(name="noGroupFreelancer")
+
         self.client = APIClient()
         self.writer = User.objects.create_user(
             'test_user',
@@ -76,6 +80,40 @@ class TestUsersCreateView(TestUsers):
         }
         response = self.client.post("/auth/register", data)
         self.assertEqual(response.status_code, 400)
+
+
+class TestUserSetGroupView(TestUsers):
+    def test_set_group_freelancer_sucess(self):
+        data = {
+            'group': 'noGroupFreelancer'
+        }
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        response = self.client.post("/auth/set-group", data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_set_group_estabelecimento_sucess(self):
+        data = {
+            'group': 'noGroupEstabelecimento'
+        }
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        response = self.client.post("/auth/set-group", data)
+        self.assertEqual(response.status_code, 200)
+
+    
+    def test_set_group_error(self):
+        data = {
+            'group': 'invalid'
+        }
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
+        response = self.client.post("/auth/set-group", data)
+        self.assertEqual(response.data, None)
+
+    def test_set_group_auth(self):
+        data = {
+            'group': 'noGroupEstabelecimento'
+        }
+        response = self.client.post("/auth/set-group", data)
+        self.assertEqual(response.status_code, 302)
 
 
 class TestUsersProfileView(TestUsers):

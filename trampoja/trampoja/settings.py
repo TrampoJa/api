@@ -28,6 +28,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+ADMINS = [('luiz', 'luizdendena@trampoja.com')]
+
 # Application definition
 
 INSTALLED_APPS = [

@@ -1,6 +1,6 @@
 import requests
 import json
-from django.core.mail import send_mail, send_mass_mail
+from django.core.mail import send_mail, send_mass_mail, mail_admins
 from rest_framework.response import Response
 from .base_message import BaseEmailMessage, BaseWhatsAppMessage
 
@@ -38,8 +38,14 @@ class SendEmailMessage(BaseEmailMessage):
 
     def sendNovaOfertaMessage(self):
         from django.contrib.auth.models import User
-        users = User.objects.filter(last_name='Freelancer')
+        users = User.objects.filter(groups__name='Freelancer')
         emails = []
+
+        mail_admins(
+            self.titulo,
+            'Um novo trampo está disponível.',
+        )
+
         for user in users:
             email = (
                 self.titulo,
@@ -48,24 +54,12 @@ class SendEmailMessage(BaseEmailMessage):
                 [user.email]
             )
             emails.append(email)
-        """
-        Implementação provisória para Wellinton
-        montar lista de transmissão para envio no wpp
-        """
-        email = (
-            self.titulo,
-            'Um novo trampo está disponível para você.\nConfira os detalhes em https://app.trampoja.com/trampos',
-            self.from_email,
-            ['welliton_vini1999@hotmail.com']
-        )
-        emails.append(email)
-        """
-        """
+
         try:
-            send_mass_mail(emails, fail_silently=False)
+            send_mass_mail(emails, fail_silently=True)
             return True
         except Exception:
-            return False
+             return False
 
     def sendInteressesMessage(self):
         if not self.email or not self.nome:

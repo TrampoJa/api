@@ -6,17 +6,21 @@ from rest_framework.test import APIClient
 from rest_framework.authtoken.models import Token
 from freelancers.models import FreeLancers
 from estabelecimentos.models import Estabelecimentos
+from django.contrib.auth.models import Group
 
 
 class TestInteresses(TestCase):
     def setUp(self):
+        estabelecimentoGroup = Group.objects.create(name="Estabelecimento")
+        freelancerGroup = Group.objects.create(name="Freelancer")
+
         self.client = APIClient()
         self.writer = User.objects.create_user(
             'test_user',
             'test@example.com',
             'password1'
         )
-        self.writer.last_name = "Freelancer"
+        self.writer.groups.set([freelancerGroup])
         self.writer.save()
         self.token = Token.objects.create(user=self.writer)
 
@@ -25,7 +29,7 @@ class TestInteresses(TestCase):
             'test2@example.com',
             'password2'
         )
-        self.writer2.last_name = "Estabelecimento"
+        self.writer2.groups.set([estabelecimentoGroup])
         self.writer2.save()
         self.token2 = Token.objects.create(user=self.writer2)
 
@@ -34,7 +38,7 @@ class TestInteresses(TestCase):
             'test3@example.com',
             'password3'
         )
-        self.writer3.last_name = "Freelancer"
+        self.writer3.groups.set([freelancerGroup])
         self.writer3.save()
         self.token3 = Token.objects.create(user=self.writer3)
 

@@ -1,6 +1,6 @@
 class IsFreelancerOrReadOnly():
 
     def has_object_permission(request):
-        if request.user.last_name == "Freelancer":
+        if request.user.groups.get().name == "Freelancer":
             return True
         return False
