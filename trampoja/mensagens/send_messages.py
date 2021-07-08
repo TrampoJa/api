@@ -75,7 +75,8 @@ class SendEmailMessage(BaseEmailMessage):
             send_mail(
                 self.titulo,
                 f'O freelancer {self.nome} demonstrou interesse na vaga que você disponibilizou para {self.oferta}.\n'
-                f'Confirme o quanto antes para que tanto você quanto ele consigam se organizar melhor.\n\n'
+                f'Confirme o quanto antes para que tanto você quanto ele consigam se organizar melhor\n'
+                f'Para confirmar acesse: https://app.trampoja.com/interesses \n\n'
                 f'Trampo? Já!\n',
                 self.from_email,
                 [self.email],
@@ -92,7 +93,7 @@ class SendEmailMessage(BaseEmailMessage):
             send_mail(
                 self.titulo,
                 f'Booooa!\n'
-                f'Seu trampo foi confirmado com o ESTABELECIMENTO {self.nome} para a vaga de {self.oferta}.\n'
+                f'Seu trampo foi confirmado com o {self.nome} para a vaga de {self.oferta}.\n'
                 f'Só pra reforçar, não esqueça de conferir as informações da vaga em: https://app.trampoja.com/confirmados \n\n'
                 f'Vale lembrar que você NÃO PODE VACILAR E NÃO IR, afinal vai constar no\n'
                 f'seu histórico e com 2 furadas sem justificativa a gente não vai ter como\n'
@@ -113,7 +114,8 @@ class SendEmailMessage(BaseEmailMessage):
             send_mail(
                 self.titulo,
                 f'A gente lamenta informar mas {self.nome} cancelou com você!\n'
-                f'Pedimos desculpas pelo inconveniente.\n\n'
+                f'Pedimos desculpas pelo inconveniente.\n'
+                f'Caso queira, pode conferir a justificativa do cancelamento em: https://app.trampoja.com/cancelados.\n\n'
                 f'Com carinho, equipe TrampoJá.\n',
                 self.from_email,
                 [self.email],
