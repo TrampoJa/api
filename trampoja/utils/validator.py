@@ -24,13 +24,13 @@ class Validator:
             raise ValidationError(detail='Email inválido.')
 
     def first_name(self, first_name):
-        regex = r'([^A-Za-z\s])'
+        regex = r'([^A-Za-z\s])u'
 
         if search(regex, first_name):
             raise ValidationError(detail='Primeiro nome inválido.')
 
     def last_name(self, last_name):
-        regex = r'([^A-Za-z\s])'
+        regex = r'([^A-Za-z\s])u'
         if search(regex, last_name):
             raise ValidationError(detail='Ultimo nome inválido.')
 
@@ -85,7 +85,7 @@ class Validator:
             raise ValidationError(detail='Informe um cnpj válido.')
 
     def nome(self, nome):
-        regex = r'[^\w\s]'
+        regex = r'[^\w\s]u'
         if search(regex, nome):
             raise ValidationError(detail='Informe um nome válido.')
 
