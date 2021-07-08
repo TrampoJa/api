@@ -12,7 +12,11 @@ class SendEmailMessage(BaseEmailMessage):
         try:
             send_mail(
                 self.titulo,
-                'Esta é nossa mensagem de boas vindas. Seja Bem Vindo ' + self.nome,
+                f'Bem vindo ao Trampo Já! {self.nome,}\n'
+                f'A gente fica muito feliz de ter você com a gente, afinal nosso objetivo é simplificar sua vida.\n'
+                f'Estamos totalmente a disposição pra tirar qualquer dúvida, para qualquer informação, é só chamar a gente, combinado?\n'
+                f'Então é isso, bora trampar!\n\n'
+                f'Trampo? Já!\n',
                 self.from_email,
                 [self.email],
                 fail_silently=False,
@@ -27,7 +31,7 @@ class SendEmailMessage(BaseEmailMessage):
         try:
             send_mail(
                 self.titulo,
-                'Esta é a sua nova senha ' + new_password,
+                'Esta é a sua nova senha provisória: ' + new_password,
                 self.from_email,
                 [self.email],
                 fail_silently=False,
@@ -49,7 +53,10 @@ class SendEmailMessage(BaseEmailMessage):
         for user in users:
             email = (
                 self.titulo,
-                'Um novo trampo está disponível para você.\nConfira os detalhes em https://app.trampoja.com/trampos',
+                f'Tem trampo novo no feed, corre lá e tenta a sorte!\n'
+                f'Pra conferir é só clicar no link https://app.trampoja.com/trampos\n'
+                f'Bora bora bora!\n\n'
+                f'Trampo? Já!\n',
                 self.from_email,
                 [user.email]
             )
@@ -67,8 +74,10 @@ class SendEmailMessage(BaseEmailMessage):
         try:
             send_mail(
                 self.titulo,
-                "{} acabou de demonstrar interesse na sua vaga para {}. Confira em https://app.trampoja.com/interesses"
-                .format(self.nome, self.oferta),
+                f'O freelancer {self.nome} demonstrou interesse na vaga que você disponibilizou para {self.oferta}.\n'
+                f'Confirme o quanto antes para que tanto você quanto ele consigam se organizar melhor\n'
+                f'Para confirmar acesse: https://app.trampoja.com/interesses \n\n'
+                f'Trampo? Já!\n',
                 self.from_email,
                 [self.email],
                 fail_silently=False,
@@ -83,8 +92,13 @@ class SendEmailMessage(BaseEmailMessage):
         try:
             send_mail(
                 self.titulo,
-                "Salve, {} acabou de confirmar o trampo para a vaga de {}. Confira em https://app.trampoja.com/confirmados"
-                .format(self.nome, self.oferta),
+                f'Booooa!\n'
+                f'Seu trampo foi confirmado com o {self.nome} para a vaga de {self.oferta}.\n'
+                f'Só pra reforçar, não esqueça de conferir as informações da vaga em: https://app.trampoja.com/confirmados \n\n'
+                f'Vale lembrar que você NÃO PODE VACILAR E NÃO IR, afinal vai constar no\n'
+                f'seu histórico e com 2 furadas sem justificativa a gente não vai ter como\n'
+                f'arrumar mais trampos pra você :( .\n\n'
+                f'Trampo? Já!\n',
                 self.from_email,
                 [self.email],
                 fail_silently=False,
@@ -99,8 +113,10 @@ class SendEmailMessage(BaseEmailMessage):
         try:
             send_mail(
                 self.titulo,
-                "{} acabou de cancelar o trampo para a vaga de {}. Confira em https://app.trampoja.com/confirmados"
-                .format(self.nome, self.oferta),
+                f'A gente lamenta informar mas {self.nome} cancelou com você!\n'
+                f'Pedimos desculpas pelo inconveniente.\n'
+                f'Caso queira, pode conferir a justificativa do cancelamento em: https://app.trampoja.com/cancelados.\n\n'
+                f'Com carinho, equipe TrampoJá.\n',
                 self.from_email,
                 [self.email],
                 fail_silently=False,
