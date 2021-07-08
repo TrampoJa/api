@@ -31,7 +31,7 @@ class TestUsersCreateView(TestUsers):
             'username': 'joao@gmail.com',
             'password': '123456',
             'email': 'joao@gmail.com',
-            'first_name': 'Joao',
+            'first_name': 'João',
             'last_name': 'Antunes'
         }
         response = self.client.post("/auth/register", data)
@@ -42,7 +42,7 @@ class TestUsersCreateView(TestUsers):
             'username': 'joao@gmail.com.br',
             'password': '123456',
             'email': 'joao@gmail.com.br',
-            'first_name': 'Joao',
+            'first_name': 'João',
             'last_name': 'Antunes'
         }
         response = self.client.post("/auth/register", data)
@@ -53,7 +53,7 @@ class TestUsersCreateView(TestUsers):
             'username': 'joao@gmail.com.br',
             'password': '123456',
             'email': 'joao@gmail.com.br',
-            'first_name': 'Joa1',
+            'first_name': 'Joã1)',
             'last_name': 'Antunes'
         }
         response = self.client.post("/auth/register", data)
@@ -64,7 +64,7 @@ class TestUsersCreateView(TestUsers):
             'username': 'test@test.com',
             'password': '12345',
             'email': 'test@test.com',
-            'first_name': 'Joao',
+            'first_name': 'João',
             'last_name': 'Antunes'
         }
         response = self.client.post("/auth/register", data)
