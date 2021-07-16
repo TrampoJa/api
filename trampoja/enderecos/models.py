@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 
 class Enderecos(models.Model):
@@ -59,7 +60,7 @@ class Enderecos(models.Model):
     )
 
     owner = models.OneToOneField(
-        'auth.User',
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='endereco',
         null=True,

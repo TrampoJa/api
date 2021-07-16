@@ -1,5 +1,6 @@
 from django.db import models
 from ofertas.models import Ofertas
+from django.conf import settings
 
 
 class Cancelados(models.Model):
@@ -11,7 +12,7 @@ class Cancelados(models.Model):
     )
 
     owner = models.ForeignKey(
-        'auth.User',
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         null=True,
         blank=True

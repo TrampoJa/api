@@ -1,5 +1,5 @@
 from django.test import TestCase
-from users.views import User
+from users.models import User
 from rest_framework.test import APIClient
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import Group
@@ -32,7 +32,8 @@ class TestUsersCreateView(TestUsers):
             'password': '123456',
             'email': 'joao@gmail.com',
             'first_name': 'João',
-            'last_name': 'Antunes'
+            'last_name': 'Antunes',
+            'telefone': '49999950411'
         }
         response = self.client.post("/auth/register", data)
         self.assertEqual(response.status_code, 201)
@@ -43,7 +44,8 @@ class TestUsersCreateView(TestUsers):
             'password': '123456',
             'email': 'joao@gmail.com.br',
             'first_name': 'João',
-            'last_name': 'Antunes'
+            'last_name': 'Antunes',
+            'telefone': '49999950411'
         }
         response = self.client.post("/auth/register", data)
         self.assertEqual(response.status_code, 201)
@@ -53,8 +55,9 @@ class TestUsersCreateView(TestUsers):
             'username': 'joao@gmail.com.br',
             'password': '123456',
             'email': 'joao@gmail.com.br',
-            'first_name': 'Joã1)',
-            'last_name': 'Antunes'
+            'first_name': 'Joã1$',
+            'last_name': 'Antunes',
+            'telefone': '49999950411'
         }
         response = self.client.post("/auth/register", data)
         self.assertEqual(response.status_code, 400)
@@ -65,7 +68,20 @@ class TestUsersCreateView(TestUsers):
             'password': '12345',
             'email': 'test@test.com',
             'first_name': 'João',
-            'last_name': 'Antunes'
+            'last_name': 'Antunes',
+            'telefone': '49999950411'
+        }
+        response = self.client.post("/auth/register", data)
+        self.assertEqual(response.status_code, 400)
+
+    def test_create_users_post_error_telefone(self):
+        data = {
+            'username': 'test@test.com',
+            'password': '12345',
+            'email': 'test@test.com',
+            'first_name': 'João',
+            'last_name': 'Antunes',
+            'telefone': '49999x50$11'
         }
         response = self.client.post("/auth/register", data)
         self.assertEqual(response.status_code, 400)
@@ -76,7 +92,8 @@ class TestUsersCreateView(TestUsers):
             'password': '123456',
             'email': '',
             'first_name': '',
-            'last_name': ''
+            'last_name': '',
+            'telefone': ''
         }
         response = self.client.post("/auth/register", data)
         self.assertEqual(response.status_code, 400)
@@ -106,7 +123,7 @@ class TestUserSetGroupView(TestUsers):
         }
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token.key)
         response = self.client.post("/auth/set-group", data)
-        self.assertEqual(response.data, None)
+        self.assertEqual(response.data, {'group': ''})
 
     def test_set_group_auth(self):
         data = {

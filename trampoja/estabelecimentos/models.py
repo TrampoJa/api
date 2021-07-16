@@ -1,6 +1,7 @@
 from django.db import models
 from planos.models import Planos
 from .managers import EstabelecimentoManager
+from django.conf import settings
 
 
 def upload_path(instance, filename):
@@ -10,7 +11,7 @@ def upload_path(instance, filename):
 class Estabelecimentos(models.Model):
 
     owner = models.OneToOneField(
-        'auth.User',
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='estabelecimento',
         null=True,

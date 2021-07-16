@@ -40,7 +40,7 @@ class CreateFreeLancerView():
         if serializer.is_valid():
             Validator(serializer.validated_data)
             serializer.save(owner=request.user)
-            user = User.set_group(user, "Freelancer")
+            user.set_group("Freelancer")
             userSerializer = UserSerializer(user)
             return Response([serializer.data, userSerializer.data],
                             status=status.HTTP_201_CREATED)

@@ -1,5 +1,6 @@
 from django.db import models
 from ofertas.models import Ofertas
+from django.conf import settings
 
 
 class Confirmados(models.Model):
@@ -12,7 +13,7 @@ class Confirmados(models.Model):
     )
 
     owner = models.ForeignKey(
-        'auth.User',
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='confirmados',
         null=True,

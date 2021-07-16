@@ -7,7 +7,7 @@ from rest_framework.authtoken.models import Token
 
 from ofertas.models import Ofertas
 
-from django.contrib.auth.models import User
+from users.models import User
 
 from estabelecimentos.models import Estabelecimentos
 

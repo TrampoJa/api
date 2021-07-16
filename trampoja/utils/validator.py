@@ -24,13 +24,12 @@ class Validator:
             raise ValidationError(detail='Email inválido.')
 
     def first_name(self, first_name):
-        regex = r'([^A-Za-z\s])u'
-
+        regex = r"[^A-Za-zÀ-Ÿà-ÿ\s']"
         if search(regex, first_name):
             raise ValidationError(detail='Primeiro nome inválido.')
 
     def last_name(self, last_name):
-        regex = r'([^A-Za-z\s])u'
+        regex = r"[^A-Za-zÀ-Ÿà-ÿ\s']"
         if search(regex, last_name):
             raise ValidationError(detail='Ultimo nome inválido.')
 

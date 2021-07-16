@@ -1,7 +1,7 @@
 import datetime
 from django.test import TestCase
 from avaliacoes.models import Avaliacoes
-from users.views import User
+from users.models import User
 from rest_framework.test import APIClient
 from ofertas.models import Ofertas
 from rest_framework.authtoken.models import Token

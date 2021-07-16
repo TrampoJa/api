@@ -16,6 +16,6 @@ class Formater:
         return data
 
     def formaterImageName(image, imageNewName):
-        split = image.name.split('.')     
+        split = image.name.split('.')    
         image._set_name(f'{imageNewName}.'+split[1])
         return image

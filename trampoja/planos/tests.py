@@ -3,7 +3,7 @@ from django.test import TestCase
 from rest_framework.test import APIClient
 from rest_framework.authtoken.models import Token
 
-from django.contrib.auth.models import User
+from users.models import User
 
 
 class TestPlanos(TestCase):
