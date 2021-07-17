@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 
 class Ofertas(models.Model):
@@ -35,7 +36,7 @@ class Ofertas(models.Model):
     )
 
     owner = models.ForeignKey(
-        'auth.User',
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='ofertas',
         null=True,

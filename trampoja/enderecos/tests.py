@@ -1,5 +1,5 @@
 from django.test import TestCase
-from users.views import User
+from users.models import User
 from enderecos.models import Enderecos
 from rest_framework.test import APIClient
 from rest_framework.authtoken.models import Token

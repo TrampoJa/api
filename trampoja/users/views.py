@@ -3,7 +3,6 @@ from random import randint
 from django.contrib.auth import authenticate, login
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 
 from rest_framework.response import Response
 from rest_framework import status
@@ -13,7 +12,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import ValidationError, NotFound, NotAuthenticated
 
 from .serializers import UserSerializer
-from .models import User as Manager
+from .models import User
 from .tasks import task_send_welcome_message, task_send_recovery_message
 
 from utils.validator import Validator
@@ -45,12 +44,15 @@ class CreateUserView():
                 request.data['email'],
                 request.data['password'],
             )
+
             user.first_name = request.data['first_name'] 
             user.last_name = request.data['last_name']
+            user.telefone = request.data['telefone']
             user.save()
+            
             Token.objects.create(user=user)
-            serializer = UserSerializer(user)
             task_send_welcome_message.delay(user.email, user.first_name)
+            serializer = UserSerializer(user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except Exception:
             raise ValidationError(detail=
@@ -66,13 +68,13 @@ class SetGroupUserView():
     @login_required()
     def setGroup(request, format=None):
         user = get_user(request.user.pk)
+        user.set_group(request.data['group'])
         try:
-            user = Manager.set_group(user, request.data['group'])
-            user = UserSerializer(user)
-
-            return Response(user.data)
+            if user.groups.get():
+                user = UserSerializer(user)
+                return Response(user.data)
         except Exception:
-            return Response(status=200)
+            return Response({'group': ''}, status=200)
 
 
 class ProfileUserView():

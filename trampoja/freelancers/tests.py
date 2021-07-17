@@ -3,7 +3,7 @@ import io
 from PIL import Image
 
 from django.test import TestCase
-from users.views import User
+from users.models import User
 from freelancers.models import FreeLancers
 from rest_framework.test import APIClient
 from rest_framework.authtoken.models import Token
