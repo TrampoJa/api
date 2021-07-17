@@ -15,28 +15,3 @@ class User(AbstractUser):
             self.groups.set([group])
         except Group.DoesNotExist:
             ...
-
-    
-'''
-FAZER BACKUP BD -> MODELO ANTIGO
-
-REALIZAR EXPORT DE TODAS AS TABELAS -> MODELO NOVO
-
-DROPAR BANCO
-
-CRIAR BANCO NOVAMENTE
-
-BAIXAR ESSA BRANCH
-
-RODAR MIGRATIONS
-
-REALIZAR OS IMPORTS DE TODAS AS TABELAS
-
-ALTERAR SEQUENCIA DE IDS:
--- SELECT MAX(id) FROM users_user;
--- Select nextval(pg_get_serial_sequence('users_user', 'id'));
-
--- SELECT setval(pg_get_serial_sequence('users_user', 'id'), (SELECT MAX(id) FROM users_user)+1);
-
-MESCLAR COM A DEV, SUBIR BETA E MASTER
-'''
