@@ -1,10 +1,17 @@
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, AbstractUser
+from django.db import models
 
+class User(AbstractUser):
 
-class User:
-
-    def set_group(user, groupName):
-        group = Group.objects.get_by_natural_key(groupName)
-        user.groups.set([group])
-        user.save()
-        return user
+    telefone = models.CharField(
+        max_length=16,
+        null=True,
+        blank=True
+    )
+    
+    def set_group(self, groupName):
+        try:
+            group = Group.objects.get_by_natural_key(groupName)
+            self.groups.set([group])
+        except Group.DoesNotExist:
+            ...

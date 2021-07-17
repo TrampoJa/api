@@ -1,10 +1,9 @@
 from django.db import models
-from rest_framework.exceptions import ValidationError, NotFound, PermissionDenied
+from rest_framework.exceptions import NotFound
 
 from utils.validator import Validator
 
 from users.serializers import UserSerializer
-from users.models import User
 
 
 class EstabelecimentoManager(models.Manager):
@@ -23,13 +22,9 @@ class EstabelecimentoManager(models.Manager):
     def create_estabelecimento(self, estabelecimento, user):
         Validator(estabelecimento.validated_data)
         estabelecimento.save(owner=user)
-        user = self.set_group(user)
-        return [estabelecimento.data, user.data]
-
-    def set_group(self, user):
-        user = User.set_group(user, "Estabelecimento")
+        user.set_group("Estabelecimento")
         user = UserSerializer(user)
-        return user
+        return [estabelecimento.data, user.data]
 
     def update(self, estabelecimento):
         Validator(estabelecimento.validated_data)

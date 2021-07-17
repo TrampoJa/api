@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 
 def upload_path(instance, filename):
@@ -12,7 +13,7 @@ def upload_path_docs(instance, filename):
 class FreeLancers(models.Model):
 
     owner = models.OneToOneField(
-        'auth.User',
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='freelancer',
         null=True,

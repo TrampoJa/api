@@ -32,6 +32,8 @@ ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'app.trampoja.com']
 
 ADMINS = [('luiz', 'contato@trampoja.com')]
 
+AUTH_USER_MODEL = 'users.User'
+
 # Application definition
 
 INSTALLED_APPS = [

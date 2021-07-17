@@ -1,6 +1,7 @@
 from django.test import TestCase
 from .send_messages import *
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group
+from users.models import User
 
 
 class TestEmailMessages(TestCase):
