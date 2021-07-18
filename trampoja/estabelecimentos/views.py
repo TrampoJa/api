@@ -29,6 +29,7 @@ class CreateEstabelecimentoView():
         if estabelecimento.is_valid():
             response = Estabelecimentos.manager.create_estabelecimento(
                 estabelecimento, user)
+            
             return Response(response, status=status.HTTP_201_CREATED)
 
         raise ValidationError(detail=
@@ -47,6 +48,7 @@ class ListEstabelecimentoView():
         if estabelecimentos is not None:
             estabelecimento = EstabelecimentosSerializer(
                 estabelecimentos, many=True)
+            
             return Response(estabelecimento.data, status=status.HTTP_200_OK)
 
         raise NotFound(detail=["Não foi possível exibir os estabelecimentos."])
@@ -61,6 +63,7 @@ class ProfileEstabelecimentoView():
 
         if estabelecimento is not None:
             estabelecimento = EstabelecimentosSerializer(estabelecimento)
+            
             return Response(estabelecimento.data, status=status.HTTP_200_OK)
 
         raise NotFound(detail=["Não foi possível exibir seus dados."])
@@ -76,7 +79,9 @@ class DetailEstabelecimentoView():
         if IsOwnerOrReadOnly.has_object_permission(request, estabelecimento):
             if estabelecimento is not None:
                 estabelecimento = EstabelecimentosSerializer(estabelecimento)
+                
                 return Response(estabelecimento.data, status=status.HTTP_200_OK)
+            
             raise NotFound(detail=["Não foi possível exibir seus dados."])
 
         raise PermissionDenied(detail=["Você não tem permissão para isso."])
@@ -93,10 +98,13 @@ class UpdateEstabelecimentoView():
         if IsOwnerOrReadOnly.has_object_permission(request, estabelecimento):
             estabelecimento = EstabelecimentosSerializer(
                 estabelecimento, data=request.data)
+            
             if estabelecimento.is_valid():
                 estabelecimento = Estabelecimentos.manager.update(
                     estabelecimento)
+                
                 return Response(estabelecimento, status=status.HTTP_200_OK)
+            
             raise ValidationError(detail=
                     'Não foi possível atualizar seus dados, '
                     'verifique os dados informados e tente novamente.'
@@ -115,7 +123,9 @@ class DeleteEstabelecimentoView():
         if IsOwnerOrReadOnly.has_object_permission(request, estabelecimento):
             try:
                 estabelecimento.delete()
+                
                 return Response(status=status.HTTP_200_OK)
+            
             except Exception:
                 raise ValidationError(detail="Algo deu errado.")
 
@@ -130,6 +140,8 @@ class FindCNPJEstabelecimentoView():
         try:
             cnpj = request.data['cnpj']
             response = requests.get(f"https://brasilapi.com.br/api/cnpj/v1/{cnpj}")
+            
             return Response(json.loads(response.content))
+        
         except Exception:
             raise ValidationError(detail="CNPJ inválido")

@@ -53,12 +53,11 @@ class CreateUserView():
             Token.objects.create(user=user)
             task_send_welcome_message.delay(user.email, user.first_name)
             serializer = UserSerializer(user)
+            
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
         except Exception:
-            raise ValidationError(detail=
-                    'Não foi possível realizar cadastro, '
-                    'verfique os dados informados e tente novamente.'
-                )
+            raise ValidationError(detail='Não foi possível realizar cadastro.')
 
 
 class SetGroupUserView():
@@ -69,10 +68,13 @@ class SetGroupUserView():
     def setGroup(request, format=None):
         user = get_user(request.user.pk)
         user.set_group(request.data['group'])
+
         try:
             if user.groups.get():
                 user = UserSerializer(user)
+                
                 return Response(user.data)
+        
         except Exception:
             return Response({'group': ''}, status=200)
 
@@ -83,9 +85,12 @@ class ProfileUserView():
     @login_required()
     def profile(request, format=None):
         user = get_user(request.user.pk)
+
         if user is not None:
             serializer = UserSerializer(user)
+            
             return Response(serializer.data, status=status.HTTP_200_OK)
+        
         raise NotFound(detail=["Não foi possível exibir seus dados."])
 
 
@@ -95,9 +100,12 @@ class DetailUserView():
     @login_required()
     def detail(request, pk, format=None):
         user = get_user(pk)
+
         if user is not None:
             serializer = UserSerializer(user)
+            
             return Response(serializer.data, status=status.HTTP_200_OK)
+        
         raise NotFound(
             detail="Não foi possível exibir os detalhes do usuário.")
 
@@ -121,7 +129,9 @@ class ChangeEmailView():
             user.email = request.data['email']
             user.username = request.data['email']
             user.save()
+            
             return Response(user.username, status=status.HTTP_200_OK)
+        
         except Exception:
             raise ValidationError(detail="Não foi possível alterar seu email.")
 
@@ -133,11 +143,14 @@ class ChangePasswordView():
     @login_required()
     def setPassword(request, format=None):
         Validator(request.data)
+
         try:
             user = request.user
             user.set_password(request.data['password'])
             user.save()
+            
             return Response({'success': 'success'}, status=status.HTTP_200_OK)
+        
         except Exception:
             raise ValidationError(detail="Não foi possível alterar sua senha.")
 
@@ -150,10 +163,14 @@ class RecoveryPasswordView():
             user = User.objects.get(username=request.data['email'])
             new_password = str(randint(100000, 999999))
             user.set_password(new_password)
+            
             task_send_recovery_message.delay(
                 user.email, user.first_name, new_password)
+            
             user.save()
+            
             return Response({"success": "success"}, status=200)
+        
         except Exception:
             raise NotFound(detail=["Este email não está cadastrado."])
 
@@ -165,12 +182,16 @@ class Login():
         try:
             username = request.data['username']
             password = request.data['password']
+
             user = authenticate(username=username, password=password)
+
             if user.is_authenticated:
                 login(request, user)
                 serializer = UserSerializer(user)
+                
                 return Response(serializer.data, status=status.HTTP_200_OK)
             else:
                 raise NotAuthenticated(detail="Não foi possível fazer login.")
+       
         except Exception:
             raise ValidationError(detail=["Email ou senha inválidos."])

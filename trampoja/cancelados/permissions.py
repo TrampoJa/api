@@ -11,7 +11,7 @@ class IsOwnerOrReadOnly():
                 if request.user == freelancer.owner:
                     return True
         except Exception:
-            pass
+            ...
 
         try:
             estabelecimento = Estabelecimentos.manager.get(owner=request.user)
@@ -19,6 +19,6 @@ class IsOwnerOrReadOnly():
                 if request.user == estabelecimento.owner:
                     return True
         except Exception:
-            pass
+            ...
 
         return False

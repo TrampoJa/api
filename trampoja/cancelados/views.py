@@ -39,10 +39,12 @@ class CreateCanceladoView():
         oferta = get_oferta(request.data['oferta'])
         freelancer = get_freelancer(request.data['freelancer'])
         confirmado = get_confirmado(request.data['confirmado'])
+        
         hora_limite = datetime.datetime.now() + timedelta(hours=6)
 
         if IsOwnerOrReadOnly.has_object_permission(request):
             autor = 'F' if request.user.groups.get().name == "Freelancer" else 'E'
+            
             if oferta.date_inicial == datetime.date.today():
                 if hora_limite.time() > oferta.time:
                     oferta.closed = True
@@ -64,8 +66,11 @@ class CreateCanceladoView():
                 oferta.status = True
                 oferta.canceled = True
                 oferta.save()
+                
                 confirmado.delete()
+                
                 serializer = CanceladosSerializer(c)
+                
                 if request.user.groups.get().name == 'Freelancer':
                     task_send_cancelados_message.delay(
                         serializer.data['estabelecimento_email'],
@@ -78,10 +83,13 @@ class CreateCanceladoView():
                         serializer.data['estabelecimento'],
                         serializer.data['oferta_nome'],
                     )
+                
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
+            
             except Exception:
                 raise ValidationError(
                     detail="Não foi possível cancelar este trampo.")
+        
         raise PermissionDenied(detail=["Você não tem permissão para isso."])
 
 
@@ -91,9 +99,12 @@ class ListToFreelancerCanceladosView():
     @login_required()
     def listToFreelancer(request, format=None):
         cancelados = Cancelados.objects.filter(owner_id=request.user.pk)
+
         if cancelados is not None:
             serializer = CanceladosSerializer(cancelados, many=True)
+            
             return Response(serializer.data, status=status.HTTP_200_OK)
+        
         raise NotFound(
             detail=["Não foi possível exibir os trampos cancelados."])
 
@@ -105,8 +116,11 @@ class ListToEstabelecimentoCanceladosView():
     def listToEstabelecimento(request, format=None):
         cancelados = Cancelados.objects.filter(
             oferta__owner_id=request.user.pk)
+        
         if cancelados is not None:
             serializer = CanceladosSerializer(cancelados, many=True)
+            
             return Response(serializer.data, status=status.HTTP_200_OK)
+        
         raise NotFound(
             detail=["Não foi possível exibir os trampos cancelados."])
