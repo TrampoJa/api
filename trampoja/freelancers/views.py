@@ -37,11 +37,14 @@ class CreateFreeLancerView():
     def create(request, format=None):
         user = get_user(request.user.id)
         serializer = FreeLancersSerializer(data=request.data)
+        
         if serializer.is_valid():
             Validator(serializer.validated_data)
+            
             serializer.save(owner=request.user)
             user.set_group("Freelancer")
             userSerializer = UserSerializer(user)
+            
             return Response([serializer.data, userSerializer.data],
                             status=status.HTTP_201_CREATED)
         raise ValidationError(detail=
@@ -56,9 +59,12 @@ class ListFreeLancerView():
     @login_required()
     def liste(request, format=None):
         freelancers = FreeLancers.objects.all()
+        
         if freelancers is not None:
             serializer = FreeLancersSerializer(freelancers, many=True)
+            
             return Response(serializer.data, status=status.HTTP_200_OK)
+        
         raise NotFound(detail=["Não foi possível exibir os freelancers."])
 
 
@@ -68,9 +74,12 @@ class ProfileFreeLancerView():
     @login_required()
     def profile(request, format=None):
         freelancer = FreeLancers.objects.get(owner_id=request.user.pk)
+        
         if freelancer is not None:
             serializer = FreeLancersSerializer(freelancer)
+            
             return Response(serializer.data, status=status.HTTP_200_OK)
+        
         raise NotFound(detail=["Não foi possível exibir seus dados."])
 
 
@@ -80,11 +89,15 @@ class DetailFreeLancerView():
     @login_required()
     def detail(request, pk, format=None):
         freelancer = get_freelancer(pk)
+        
         if IsOwnerOrReadOnly.has_object_permission(request, freelancer):
             if freelancer is not None:
                 serializer = FreeLancersSerializer(freelancer)
+                
                 return Response(serializer.data, status=status.HTTP_200_OK)
+            
             raise NotFound(detail=["Não foi possível exibir seus dados."])
+        
         raise PermissionDenied(detail=["Você não tem permissão para isso."])
 
 
@@ -95,16 +108,21 @@ class UpdateFreeLancerView():
     @login_required()
     def update(request, pk, format=None):
         freelancer = get_freelancer(pk)
+        
         if IsOwnerOrReadOnly.has_object_permission(request, freelancer):
             serializer = FreeLancersSerializer(freelancer, data=request.data)
+            
             if serializer.is_valid():
                 Validator(serializer.validated_data)
                 serializer.save()
+                
                 return Response(serializer.data, status=status.HTTP_200_OK)
+            
             raise ValidationError(detail=
                     'Não foi possível atualizar seus dados, '
                     'verifique os dados informados e tente novamente.'
                 )
+        
         raise PermissionDenied(detail=["Você não tem permissão para isso."])
 
 
@@ -114,12 +132,16 @@ class DeleteFreeLancerView():
     @login_required()
     def delete(request, pk, format=None):
         freelancer = get_freelancer(pk)
+        
         if IsOwnerOrReadOnly.has_object_permission(request, freelancer):
             try:
                 freelancer.delete()
+                
                 return Response(status=status.HTTP_200_OK)
+            
             except Exception:
                 raise ValidationError(detail="Algo deu errado.")
+        
         raise PermissionDenied(detail=["Você não tem permissão para isso."])
 
 
@@ -132,7 +154,9 @@ class CountOfertasConfirmadasFreelancerView():
             freelancer = FreeLancers.objects.get(owner=request.user)
             count = Confirmados.objects.filter(
                 owner=freelancer.owner, oferta_id__closed=True).count()
+            
             return Response(count)
+        
         except Exception:
             raise NotFound(
                 detail="Não foi possíbel exibir o número de trampos")
@@ -149,6 +173,7 @@ class HistoricoFreelancerView():
             freelancer = FreeLancers.objects.get(owner=pk)
             confirmados = Confirmados.objects.filter(
                 owner=freelancer.owner, oferta_id__closed=True)
+            
             serializer = ConfirmadosSerializer(confirmados, many=True)
 
             for data in serializer.data:
@@ -160,6 +185,7 @@ class HistoricoFreelancerView():
                 historico.append(aux)
 
             return Response(historico)
+        
         except Exception:
             raise ValidationError(
                 detail='Não foi possível exibir o histórico.')
@@ -173,8 +199,10 @@ class PossuiDocumentosFreelancerView():
         try:
             freelancer = FreeLancers.objects.get(owner=request.user)
             documeto = Documentos.objects.get(freelancer=freelancer)
+            
             documeto = DocumentosSerializer(documeto)
         
             return Response(documeto.data['freelancer'], status=status.HTTP_200_OK)
+        
         except Exception:
             return Response(status=status.HTTP_200_OK)

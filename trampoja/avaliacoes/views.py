@@ -42,7 +42,9 @@ class CreateAvaliacaoView():
             oferta.closed = True
             oferta.save()
             serializer = AvaliacoesSerializer(avaliacao)
+            
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
         except Exception:
             raise ValidationError(
                 detail="Ops, não foi possível avaliar este trampo!")
@@ -56,6 +58,8 @@ class GetSelfAvaliacaoView():
         try:
             avaliacoes = Avaliacoes.objects.filter(
                 owner=request.user.pk).aggregate(Avg('nota'))
+            
             return Response(avaliacoes['nota__avg'], status=status.HTTP_200_OK)
+        
         except Avaliacoes.DoesNotExist:
-            raise NotFound(detail=["Avalição não encontrada."])
+            raise NotFound(detail=["Não foi possível exibir sua avaliação."])

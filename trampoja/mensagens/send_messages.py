@@ -66,7 +66,7 @@ class SendEmailMessage(BaseEmailMessage):
             send_mass_mail(emails, fail_silently=True)
             return True
         except Exception:
-             return False
+            return False
 
     def sendInteressesMessage(self):
         if not self.email or not self.nome:

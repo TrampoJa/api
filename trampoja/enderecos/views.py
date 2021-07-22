@@ -25,9 +25,12 @@ class CreateEnderecoView():
     @login_required()
     def create(request, format=None):
         serializer = EnderecosSerializer(data=request.data)
+        
         if serializer.is_valid():
             serializer.save(owner=request.user)
+            
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
         raise ValidationError(detail=
                 'Não foi possível criar endereço, verifique '
                 'os dados informados e tente novamente.'
@@ -40,9 +43,12 @@ class ProfileEnderecoView():
     @login_required()
     def profile(request, format=None):
         endereco = Enderecos.objects.get(owner_id=request.user.pk)
+        
         if endereco is not None:
             serializer = EnderecosSerializer(endereco)
+            
             return Response(serializer.data, status=status.HTTP_200_OK)
+        
         raise NotFound(detail=["Não foi possível exibir seu endereço."])
 
 
@@ -54,9 +60,12 @@ class UpdateEnderecoView():
     def update(request, pk, format=None):
         endereco = get_endereco(pk)
         serializer = EnderecosSerializer(endereco, data=request.data)
+        
         if serializer.is_valid():
             serializer.save()
+            
             return Response(serializer.data, status=status.HTTP_200_OK)
+        
         raise ValidationError(detail=
                 'Não foi possível atualizar seu endereço, '
                 'verifique os dados informados e tente novamente.'
