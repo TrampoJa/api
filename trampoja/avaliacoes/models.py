@@ -2,6 +2,7 @@ from django.db import models
 from ofertas.models import Ofertas
 from django.conf import settings
 
+
 class Avaliacoes(models.Model):
 
     nota = models.IntegerField(

@@ -1,3 +1,8 @@
 from django.contrib import admin
+from .models import Confirmados
 
-# Register your models here.
+
+@admin.register(Confirmados)
+class ConfirmadosAdmin(admin.ModelAdmin):
+    list_display = ['id', 'owner', 'oferta', 'create']
+    search_fields = ['id', 'owner', 'oferta', 'create']
