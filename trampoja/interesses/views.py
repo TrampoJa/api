@@ -30,25 +30,33 @@ class CreateInteresseView():
     def create(request, format=None):
         if IsFreelancerOrReadOnly.has_object_permission(request):
             oferta = get_oferta(request.data['id'])
+            
             if Interesses.objects.filter(oferta=oferta, owner=request.user):
                 raise ValidationError(
                     detail="Você já demonstrou interesse nesse trampo.")
+            
             try:
                 i = Interesses.objects.create(
                     oferta=oferta, owner=request.user)
+                
                 oferta.edit = False
                 oferta.save()
+                
                 serializer = InteressesSerializer(i)
+                
                 task_send_interesse_message.delay(
                     serializer.data['estabelecimento_email'],
                     serializer.data['freelancer_nome'] + ' ' +
                     serializer.data['freelancer_sobrenome'],
                     serializer.data['oferta_nome']
                 )
+                
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
+            
             except Exception:
                 raise ValidationError(
                     detail="Não foi possível demonstrar interesse neste trampo.")
+        
         raise PermissionDenied(detail=["Você não tem permissão para isso."])
 
 
@@ -58,9 +66,12 @@ class ListToFreelancerInteresseView():
     @login_required()
     def listToFreelancer(request, format=None):
         interesses = Interesses.objects.filter(owner_id=request.user.pk, oferta_id__closed=False)
+        
         if interesses is not None:
             serializer = InteressesSerializer(interesses, many=True)
+            
             return Response(serializer.data, status=status.HTTP_200_OK)
+        
         raise NotFound(detail=["Não foi possível exibir seus interesses."])
 
 
@@ -71,7 +82,10 @@ class ListToEstabelecimentoInteresseView():
     def listToEstabelecimento(request, format=None):
         interesses = Interesses.objects.filter(
             oferta__owner_id=request.user.pk, oferta_id__closed=False)
+        
         if interesses is not None:
             serializer = InteressesSerializer(interesses, many=True)
+            
             return Response(serializer.data, status=status.HTTP_200_OK)
+        
         raise NotFound(detail=["Não foi possível exibir seus interesses."])

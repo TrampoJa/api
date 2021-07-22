@@ -30,8 +30,10 @@ class UploadImageView():
                 
                 Estabelecimentos.manager.set_logo(estabelecimento, image)
                 estabelecimento = EstabelecimentosSerializer(estabelecimento)
+                
                 return Response(
                     {"logo": estabelecimento.data['logo']}, status=200)
+            
             except Exception:
                 raise ValidationError(
                     detail="Não foi possível fazer o upload da sua logo.")

@@ -38,9 +38,10 @@ class CreateOfertaView():
             raise ValidationError("Você não possui trampos para publicar.")
 
         freelancers = int(request.data['freelancers'])
-        response = []
 
         if freelancers > 1:
+            response = []
+
             for i in range(freelancers):
                 serializer = OfertasSerializer(data=request.data)
                 
@@ -52,10 +53,7 @@ class CreateOfertaView():
                         estabelecimento.ofertas_para_publicar = estabelecimento.ofertas_para_publicar - 1
                         estabelecimento.save()
                 else:
-                    raise ValidationError(detail=
-                            'Não foi possível criar estes trampos, '
-                            'verfique os dados informados e tente novamente.'
-                        )
+                    raise ValidationError(detail='Não foi possível criar estes trampos.')
 
             task_send_nova_oferta_message.delay()
             return Response(response, status=status.HTTP_201_CREATED)
@@ -72,10 +70,7 @@ class CreateOfertaView():
                 
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             
-            raise ValidationError(detail=
-                            'Não foi possível criar este trampo, '
-                            'verfique os dados informados e tente novamente.'
-                        )
+            raise ValidationError(detail='Não foi possível criar este trampo.')
 
 
 class ListOfertaView():
@@ -85,9 +80,11 @@ class ListOfertaView():
     def liste(request, format=None):
         ofertas = Ofertas.objects.filter(
             date_inicial__gte=datetime.date.today())
+        
         if ofertas is not None:
             serializer = OfertasSerializer(ofertas, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
+        
         raise NotFound(detail=["Não foi possível exibir os trampos."])
 
 
@@ -98,9 +95,11 @@ class ProfileOfertaView():
     def profile(request, format=None):
         ofertas = Ofertas.objects.filter(
             owner_id=request.user.pk).exclude(status=False)
+        
         if ofertas is not None:
             serializer = OfertasSerializer(ofertas, many=True)
             return Response(serializer.data, status=status.HTTP_200_OK)
+        
         raise NotFound(detail=["Não foi possível exibir seus trampos."])
 
 
@@ -110,12 +109,14 @@ class DetailOfertaView():
     @login_required()
     def detail(request, pk, format=None):
         oferta = get_oferta(pk)
+
         if IsOwnerOrReadOnly.has_object_permission(request, oferta):
             if oferta is not None:
                 serializer = OfertasSerializer(oferta)
                 return Response(serializer.data, status=status.HTTP_200_OK)
             raise NotFound(
                 detail=["Não foi possível exibir os detalhes do trampo."])
+        
         raise PermissionDenied(detail=["Você não tem permissão para isso."])
 
 
@@ -126,21 +127,22 @@ class UpdateOfertaView():
     @login_required()
     def update(request, pk, format=None):
         oferta = get_oferta(pk)
+        
         if oferta.edit is False:
             raise ValidationError(detail=
                 'Já existem freelancers interessados neste trampo. '
                 'Ele não pode mais ser editado.'
             )
+
         if IsOwnerOrReadOnly.has_object_permission(request, oferta):
             serializer = OfertasSerializer(oferta, data=request.data)
+            
             if serializer.is_valid():
                 Validator(serializer.validated_data)
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            raise ValidationError(detail=
-                    'Não foi possível atualizar este trampo, '
-                    'verifique os dados informados e tente novamente.'
-                )
+            raise ValidationError(detail='Não foi possível atualizar este trampo.')
+        
         raise PermissionDenied(detail=["Você não tem permissão para isso."])
 
 
@@ -151,6 +153,7 @@ class DeleteOfertaView():
     def delete(request, pk, format=None):
         oferta = get_oferta(pk)
         estabelecimento = Estabelecimentos.manager.get(owner=request.user)
+
         if IsOwnerOrReadOnly.has_object_permission(request, oferta):
             try:
                 oferta.delete()
@@ -159,4 +162,5 @@ class DeleteOfertaView():
                 return Response(status=status.HTTP_200_OK)
             except Exception:
                 raise ValidationError(detail="Algo deu errado.")
+        
         raise PermissionDenied(detail=["Você não tem permissão para isso."])
