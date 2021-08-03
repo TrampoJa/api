@@ -23,7 +23,7 @@ class Confirmados(models.Model):
     create = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.oferta.nome.capitalize() + self.owner.first_name.capitalize()
+        return self.oferta
 
     class Meta:
         verbose_name = 'confirmado'
