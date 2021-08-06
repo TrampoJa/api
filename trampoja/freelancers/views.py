@@ -35,22 +35,19 @@ class CreateFreeLancerView():
     @authentication_classes([TokenAuthentication])
     @login_required()
     def create(request, format=None):
-        user = get_user(request.user.id)
+        user = get_user(request.user.pk)
         serializer = FreeLancersSerializer(data=request.data)
         
         if serializer.is_valid():
             Validator(serializer.validated_data)
             
-            serializer.save(owner=request.user)
+            serializer.save(owner=user)
             user.set_group("Freelancer")
             userSerializer = UserSerializer(user)
             
             return Response([serializer.data, userSerializer.data],
                             status=status.HTTP_201_CREATED)
-        raise ValidationError(detail=
-                'Não foi possível finalizar seu cadastro, '
-                'verifique os dados informados e tente novamente'
-            )
+        raise ValidationError(detail='Não foi possível finalizar seu cadastro.')
 
 
 class ListFreeLancerView():
@@ -118,10 +115,7 @@ class UpdateFreeLancerView():
                 
                 return Response(serializer.data, status=status.HTTP_200_OK)
             
-            raise ValidationError(detail=
-                    'Não foi possível atualizar seus dados, '
-                    'verifique os dados informados e tente novamente.'
-                )
+            raise ValidationError(detail='Não foi possível atualizar seus dados.')
         
         raise PermissionDenied(detail=["Você não tem permissão para isso."])
 
