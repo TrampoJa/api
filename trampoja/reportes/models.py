@@ -1,6 +1,10 @@
 from django.db import models
 from freelancers.models import FreeLancers
 
+from ofertas.models import Ofertas
+
+from .manager import ReporteManager, MotivoManager
+
 
 class Motivos(models.Model):
 
@@ -11,6 +15,8 @@ class Motivos(models.Model):
         null=False,
         blank=False,
     )
+
+    manager = MotivoManager()
 
     created = models.DateTimeField(auto_now_add=True)
 
@@ -29,7 +35,16 @@ class Reportes(models.Model):
         blank=True
     )
 
+    trampo = models.ForeignKey(
+        Ofertas,
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+    )
+
     motivos = models.ManyToManyField(Motivos)
+
+    manager = ReporteManager()
 
     created = models.DateTimeField(auto_now_add=True)
 
