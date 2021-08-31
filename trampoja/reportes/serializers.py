@@ -13,6 +13,8 @@ class ReportesSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'freelancer',
+            'trampo',
+            'descricao',
             'motivos',
             'created'
         ]

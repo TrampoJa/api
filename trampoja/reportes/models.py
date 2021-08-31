@@ -49,3 +49,9 @@ class Reportes(models.Model):
     created = models.DateTimeField(auto_now_add=True)
 
 
+    class Meta:
+        verbose_name = 'reporte'
+        verbose_name_plural = 'reportes'
+        ordering = ['-created']
+
+

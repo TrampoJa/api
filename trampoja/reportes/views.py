@@ -10,6 +10,7 @@ from rest_framework.exceptions import ValidationError, NotFound, PermissionDenie
 from .serializers import ReportesSerializer
 from .models import Reportes, Motivos
 from .permissions import IsOwnerOrReadOnly
+from .tasks import task_send_reportes_message
 
 from ofertas.views import get_oferta
 
@@ -25,6 +26,9 @@ class CreateReporteView():
 
         oferta = get_oferta(request.data['oferta'])
 
+        if not oferta.closed:
+            raise ValidationError(detail="O trampo precisa estar finalizado para poder ser reportado.")
+
         try:
             if IsOwnerOrReadOnly.has_object_permission(request, oferta):
                 reporte = Reportes.manager.create_reporte(request.data)
@@ -35,8 +39,10 @@ class CreateReporteView():
                         motivo = Motivos.manager.get_motivo(key)
                         
                         reporte.motivos.add(motivo)
-
+                
                 reporteSerializer = ReportesSerializer(reporte)
+
+                task_send_reportes_message.delay()
                 
                 return Response(reporteSerializer.data, status=status.HTTP_201_CREATED)
 
@@ -50,4 +56,11 @@ class GetReportesFreelancerView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
     def get(request, pk):
-        return Response()
+        try:
+            reportes = Reportes.manager.filter(freelancer=pk)
+            reportesSerializer = ReportesSerializer(reportes, many=True)
+
+            return Response(reportesSerializer.data)
+        
+        except Exception:
+            raise ValidationError("Não foi possível listar os reportes")

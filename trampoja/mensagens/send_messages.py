@@ -125,6 +125,22 @@ class SendEmailMessage(BaseEmailMessage):
         except Exception:
             return False
 
+    
+    def sendReportesMessage(self):
+        if not self.email or not self.nome:
+            return False
+        try:
+            send_mail(
+                self.titulo,
+                f'Você foi reportado.\n',
+                self.from_email,
+                [self.email],
+                fail_silently=False,
+            )
+            return True
+        except Exception:
+            return False
+
 
 class SendWhatsAppMessage(BaseWhatsAppMessage):
     def sendCanceladosMessage(self):
