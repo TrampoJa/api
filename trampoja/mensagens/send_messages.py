@@ -44,6 +44,7 @@ class SendEmailMessage(BaseEmailMessage):
         from users.models import User
         users = User.objects.filter(groups__name='Freelancer')
         emails = []
+        self.titulo = 'Bora trampar, achamos uma vaga perfeita pra você!'
 
         mail_admins(
             self.titulo,
@@ -53,8 +54,8 @@ class SendEmailMessage(BaseEmailMessage):
         for user in users:
             email = (
                 self.titulo,
-                f'Tem trampo novo no feed, corre lá e tenta a sorte!\n'
-                f'Pra conferir é só clicar no link https://app.trampoja.com/trampos\n'
+                f'Tem trampo novo no feed, corre lá e tenta a sorte! 🔥\n\n'
+                f'Pra conferir é só clicar no link https://app.trampoja.com/trampos\n\n'
                 f'Bora bora bora!\n\n'
                 f'Trampo? Já!\n',
                 self.from_email,
@@ -123,7 +124,6 @@ class SendEmailMessage(BaseEmailMessage):
             return True
         except Exception:
             return False
-
     
     def sendReportesMessage(self, motivos=None, descricao=None):
         if not self.email or not self.nome:
