@@ -63,6 +63,7 @@ class CreateReporteView():
 class GetReportesFreelancerView():
     @api_view(['GET'])
     @authentication_classes([TokenAuthentication])
+    @login_required()
     def get(request, pk):
         try:
             reportes = Reportes.manager.filter(freelancer=pk)
