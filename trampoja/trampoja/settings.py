@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'mensagens',
     'planos',
     'planos_historico',
+    'reportes',
     'utils'
 ]
 
