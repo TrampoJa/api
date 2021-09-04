@@ -95,9 +95,8 @@ class SendEmailMessage(BaseEmailMessage):
                 f'Booooa!\n'
                 f'Seu trampo foi confirmado com o {self.nome} para a vaga de {self.oferta}.\n'
                 f'Só pra reforçar, não esqueça de conferir as informações da vaga em: https://app.trampoja.com/confirmados \n\n'
-                f'Vale lembrar que você NÃO PODE VACILAR E NÃO IR, afinal vai constar no\n'
-                f'seu histórico e com 2 furadas sem justificativa a gente não vai ter como\n'
-                f'arrumar mais trampos pra você :( .\n\n'
+                f'Vale lembrar que você NÃO PODE VACILAR E NÃO IR, afinal, a empresa contratante pode reporta-lo\n'
+                f'e os motivos vão ficar públicos no seu perfil dificulando você de arrumar um próximo trampo.\n\n'
                 f'Trampo? Já!\n',
                 self.from_email,
                 [self.email],
@@ -117,6 +116,45 @@ class SendEmailMessage(BaseEmailMessage):
                 f'Pedimos desculpas pelo inconveniente.\n'
                 f'Caso queira, pode conferir a justificativa do cancelamento em: https://app.trampoja.com/cancelados.\n\n'
                 f'Com carinho, equipe TrampoJá.\n',
+                self.from_email,
+                [self.email],
+                fail_silently=False,
+            )
+            return True
+        except Exception:
+            return False
+
+    
+    def sendReportesMessage(self, motivos=None, descricao=None):
+        if not self.email or not self.nome:
+            return False
+
+        textMotivos = ''
+
+        if motivos:
+            for i in range(len(motivos)):
+                motivo = motivos[i]['nome']
+
+                textMotivos = textMotivos + f'- {motivo} \n'
+
+            message = (f'Você foi reportado por {self.nome}.\n'
+                        f'Pelos seguintes motivos:\n'
+                        f'{textMotivos}'
+                        f'Veja também o que {self.nome} descreveu sobre o ocorrido:\n'
+                        f'- {descricao}\n\n'
+                        f'Com carinho, equipe TrampoJá.\n'
+                    )
+        else:
+            message = (f'Você foi reportado por {self.nome}.\n'
+                        f'Veja o que {self.nome} descreveu sobre o ocorrido:\n'
+                        f'- {descricao}\n\n'
+                        f'Com carinho, equipe TrampoJá.\n'
+                    )
+
+        try:
+            send_mail(
+                self.titulo,
+                message,
                 self.from_email,
                 [self.email],
                 fail_silently=False,

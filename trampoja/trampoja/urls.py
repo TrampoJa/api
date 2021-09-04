@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'^', include('avaliacoes.urls')),
     url(r'^', include('enderecos.urls')),
     url(r'^', include('planos.urls')),
+    url(r'^', include('reportes.urls')),
     url(r'^token/', views.obtain_auth_token),
     path('api-auth/', include('rest_framework.urls')),
     path('admin/', admin.site.urls),
