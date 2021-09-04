@@ -80,7 +80,7 @@ class TestInteressesMessage(TestEmailMessages):
 
 
 class TestConfirmadosMessage(TestEmailMessages):
-    def test_send_confirmadi_message_succes(self):
+    def test_send_confirmado_message_succes(self):
         response = SendEmailMessage(nome=self.nome, email=self.email, oferta=self.oferta)\
             .sendConfirmadosMessage()
         self.assertEqual(response, True)
@@ -110,4 +110,21 @@ class TestCanceladosMessage(TestEmailMessages):
     def test_send_cancelado_message_error_email(self):
         response = SendEmailMessage(nome=self.nome, email=None, oferta=self.oferta)\
             .sendCanceladosMessage()
+        self.assertEqual(response, False)
+
+
+class TestReportesMessage(TestEmailMessages):
+    def test_send_reporte_message_succes(self):
+        response = SendEmailMessage(nome=self.nome, email=self.email, oferta=self.oferta)\
+            .sendReportesMessage()
+        self.assertEqual(response, True)
+
+    def test_send_reporte_message_error_nome(self):
+        response = SendEmailMessage(nome=None, email=self.email, oferta=self.oferta)\
+            .sendReportesMessage()
+        self.assertEqual(response, False)
+
+    def test_send_reporte_message_error_email(self):
+        response = SendEmailMessage(nome=self.nome, email=None, oferta=self.oferta)\
+            .sendReportesMessage()
         self.assertEqual(response, False)

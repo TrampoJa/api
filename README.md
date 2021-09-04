@@ -1,7 +1,7 @@
 # <img src="https://avatars.githubusercontent.com/u/82920648?v=4" width="50" height="50"> trampoja.com
 > Status: Developing
 
-[![NPM](https://img.shields.io/badge/license-proprietary-red)](https://github.com/TrampoJa/api.trampoja.com/LICENSE)
+[![NPM](https://img.shields.io/badge/license-proprietary-red)](https://github.com/TrampoJa/api/LICENSE)
 
 <details open>
 <summary>Indice:</summary>
@@ -46,10 +46,10 @@ $ python3.8 get-pip.py
 # Criando o diretório e clonando o repositório
 $ mkdir -p ~/.www
 $ cd ~/.www
-$ git clone https://github.com/TrampoJa/api.trampoja.com
+$ git clone https://github.com/TrampoJa/api.git
 
 # Instalando virtualenv e bibliotecas para o python
-$ cd ~/.www/api.trampoja.com
+$ cd ~/.www/api
 $ pip3.8 install virtualenv
 $ virtualenv env
 $ source env/bin/activate
@@ -76,13 +76,13 @@ $ GRANT ALL PRIVILEGES ON DATABASE trampoja TO tj_user;
 $ service redis-server start
 
 #Iniciando celery
-$ cd ~/.www/api.trampoja.com
+$ cd ~/.www/api
 $ virtualenv env
 $ cd trampoja
 $ celery -A tampoja worker -l INFO
 
 #Iniciando django
-$ cd ~/.www/api.trampoja.com
+$ cd ~/.www/api
 $ virtualenv env #Caso ainda não tenha iniciado
 $ cd trampoja
 $ python3.8 manage.py runserver
@@ -91,7 +91,7 @@ $ python3.8 manage.py runserver
 ## Tests
 
 ```bash
-$ cd ~/.www/api.trampoja.com
+$ cd ~/.www/api
 $ virtualenv env
 $ cd trampoja
 $ python3.8 manage.py test

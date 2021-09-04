@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from .models import FreeLancers, Documentos
 
+from reportes.models import Reportes
+
 
 class FreeLancersSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
@@ -8,6 +10,10 @@ class FreeLancersSerializer(serializers.ModelSerializer):
     rua = serializers.ReadOnlyField(source='owner.endereco.rua')
     numero = serializers.ReadOnlyField(source='owner.endereco.numero')
     bairro = serializers.ReadOnlyField(source='owner.endereco.bairro')
+    reportes = serializers.SerializerMethodField()
+
+    def get_reportes(self, freelancer):
+        return Reportes.manager.filter(freelancer=freelancer.id).count()
 
     class Meta:
         model = FreeLancers
@@ -25,7 +31,8 @@ class FreeLancersSerializer(serializers.ModelSerializer):
             'cidade',
             'rua',
             'numero',
-            'bairro'
+            'bairro',
+            'reportes'
         ]
 
 
