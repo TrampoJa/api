@@ -42,7 +42,15 @@ class CreateReporteView():
                 
                 reporteSerializer = ReportesSerializer(reporte)
 
-                task_send_reportes_message.delay()
+                task_send_reportes_message.delay(
+                    email=reporteSerializer.data['freelancer_email'],
+                    nome=reporteSerializer.data['estabelecimento'],
+                    oferta=reporteSerializer.data['trampo']['nome'],
+
+                    motivos=reporteSerializer.data['motivos'],
+                    descricao=reporteSerializer.data['descricao']
+
+                )
                 
                 return Response(reporteSerializer.data, status=status.HTTP_201_CREATED)
 

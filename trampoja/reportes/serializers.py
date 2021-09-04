@@ -8,12 +8,17 @@ class MotivosSerializers(serializers.ModelSerializer):
 
 
 class ReportesSerializer(serializers.ModelSerializer):
+    estabelecimento = serializers.ReadOnlyField(source="trampo.owner.estabelecimento.nome")
+    freelancer_email = serializers.ReadOnlyField(source="freelancer.owner.email")
+
     class Meta:
         model = Reportes
         fields = [
             'id',
             'freelancer',
+            'freelancer_email',
             'trampo',
+            'estabelecimento',
             'descricao',
             'motivos',
             'created'
